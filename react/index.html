@@ -33,6 +33,9 @@
         .clickable-card:active {
             transform: scale(0.98);
         }
+        .lunch-card:hover {
+            filter: brightness(0.95);
+        }
     </style>
 </head>
 <body>
@@ -80,7 +83,7 @@
                 }
             };
 
-            // DATA - Oppdaterte bilder for alle dager!
+            // DATA - Nå med oppskrifter for lunsj også!
             const menuData = [
                 {
                     day: "Mandag",
@@ -90,15 +93,32 @@
                     dinner: "Kremet linsegryte med kokosmelk & nanbrød",
                     iconName: "leaf",
                     color: "text-green-600",
-                    // Bilde: Linsegryte/Curry
                     image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
-                    recipe: {
-                        title: "Kremet linsegryte",
-                        desc: "En varmende gryte full av fiber og gode smaker.",
-                        servings: 4,
-                        time: "20 min",
-                        ingredients: ["2 dl røde linser (tørre)", "1 boks kokosmelk", "1 boks hakkede tomater", "1 løk + 2 fedd hvitløk", "1 pose spinat", "1 ts ingefær", "Nanbrød til servering"],
-                        steps: ["Fres hakket løk, hvitløk og ingefær i litt olje.", "Tilsett linser, tomater og kokosmelk. Kok opp.", "La småkoke i 15 min til linsene er møre.", "Rør inn spinaten helt til slutt så den faller sammen.", "Smak til med salt/pepper. Server med nanbrød."]
+                    recipes: {
+                        dinner: {
+                            title: "Kremet linsegryte",
+                            desc: "En varmende gryte full av fiber og gode smaker.",
+                            servings: 4,
+                            time: "20 min",
+                            ingredients: ["2 dl røde linser (tørre)", "1 boks kokosmelk", "1 boks hakkede tomater", "1 løk + 2 fedd hvitløk", "1 pose spinat", "1 ts ingefær", "Nanbrød til servering"],
+                            steps: ["Fres hakket løk, hvitløk og ingefær i litt olje.", "Tilsett linser, tomater og kokosmelk. Kok opp.", "La småkoke i 15 min til linsene er møre.", "Rør inn spinaten helt til slutt så den faller sammen.", "Smak til med salt/pepper. Server med nanbrød."]
+                        },
+                        lunchKid: {
+                            title: "Hummus-skiver & grønt",
+                            desc: "Næringsrik lunsj som holder blodsukkeret stabilt.",
+                            servings: 1,
+                            time: "5 min",
+                            ingredients: ["2 skiver grovbrød", "3 ss hummus (kjøpt eller hjemmelaget)", "Paprikastaver", "En liten neve druer"],
+                            steps: ["Smør et godt lag hummus på brødskivene.", "Kutt paprika i staver som er lette å spise.", "Legg ved druer i matboksen.", "Tips: Hummus kan lages ved å mose kikerter, hvitløk, sitron, olje og tahini."]
+                        },
+                        lunchAdult: {
+                            title: "Quinoasalat med feta",
+                            desc: "Perfekt å preppe kvelden før.",
+                            servings: 1,
+                            time: "15 min",
+                            ingredients: ["1 dl kokt quinoa", "En neve spinat", "5-6 cherrytomater", "30g fetaost", "Valnøtter", "Olivenolje & sitron"],
+                            steps: ["Kok quinoa etter anvisning (gjerne lag for flere dager).", "Kutt tomater i to.", "Bland quinoa, spinat, tomater og smuldret fetaost.", "Topp med valnøtter og dressingen rett før servering."]
+                        }
                     }
                 },
                 {
@@ -109,15 +129,25 @@
                     dinner: "Ovnsbakt laks med rotgrønnsaker & tzatziki",
                     iconName: "fish",
                     color: "text-blue-500",
-                    // Bilde: Ovnsbakt laks
                     image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927?q=80&w=800&auto=format&fit=crop",
-                    recipe: {
-                        title: "Ovnsbakt laks & rotgrønt",
-                        desc: "Alt i én form - minimalt med oppvask!",
-                        servings: 4,
-                        time: "30 min",
-                        ingredients: ["4 laksefileter", "2 søtpoteter", "2 gulrøtter", "1 brokkoli", "Olivenolje", "Sitronpepper", "Tzatziki eller rømme"],
-                        steps: ["Sett ovnen på 200 grader.", "Kutt grønnsaker i biter og legg i en ildfast form.", "Hell over litt olje og krydder. Bak i 10 min.", "Legg laksestykkene oppå grønnsakene.", "Bak videre i ca 12-15 min til laksen er ferdig.", "Server med en klatt tzatziki."]
+                    recipes: {
+                        dinner: {
+                            title: "Ovnsbakt laks & rotgrønt",
+                            desc: "Alt i én form - minimalt med oppvask!",
+                            servings: 4,
+                            time: "30 min",
+                            ingredients: ["4 laksefileter", "2 søtpoteter", "2 gulrøtter", "1 brokkoli", "Olivenolje", "Sitronpepper", "Tzatziki eller rømme"],
+                            steps: ["Sett ovnen på 200 grader.", "Kutt grønnsaker i biter og legg i en ildfast form.", "Hell over litt olje og krydder. Bak i 10 min.", "Legg laksestykkene oppå grønnsakene.", "Bak videre i ca 12-15 min til laksen er ferdig.", "Server med en klatt tzatziki."]
+                        },
+                        lunchKid: {
+                            title: "Laksewraps",
+                            desc: "Enkel måte å få i barna fisk på.",
+                            servings: 1,
+                            time: "5 min",
+                            ingredients: ["1 fullkornslefse/tortilla", "1 ss Snøfrisk eller naturell kremost", "2 skiver røkelaks (eller kalkun)", "Litt spinat eller agurk"],
+                            steps: ["Smør lefsen med kremost.", "Legg på laks og grønt.", "Rull tett sammen.", "Del den gjerne i to på midten så den er lettere å holde."]
+                        },
+                        lunchAdult: null // Rester - ingen oppskrift
                     }
                 },
                 {
@@ -128,15 +158,32 @@
                     dinner: "Kyllingpanne med pesto & fullkornspasta",
                     iconName: "utensils-crossed",
                     color: "text-orange-500",
-                    // Bilde: Pasta med pesto/kylling
                     image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop",
-                    recipe: {
-                        title: "Kyllingpanne med pesto",
-                        desc: "Rask hverdagsmiddag som barna elsker.",
-                        servings: 4,
-                        time: "20 min",
-                        ingredients: ["400g kyllingfilet", "300g fullkornspasta", "1 glass grønn pesto", "1 pk cherrytomater", "Pinjekjerner (valgfritt)", "Parmesan"],
-                        steps: ["Kok pasta etter anvisning på pakken.", "Stek kyllingbiter gylne i en panne.", "Del tomatene i to og la dem surre med kyllingen i 2 min.", "Bland ferdig pasta med pesto, kylling og tomater.", "Topp med ristede kjerner hvis du har."]
+                    recipes: {
+                        dinner: {
+                            title: "Kyllingpanne med pesto",
+                            desc: "Rask hverdagsmiddag som barna elsker.",
+                            servings: 4,
+                            time: "20 min",
+                            ingredients: ["400g kyllingfilet", "300g fullkornspasta", "1 glass grønn pesto", "1 pk cherrytomater", "Pinjekjerner (valgfritt)", "Parmesan"],
+                            steps: ["Kok pasta etter anvisning på pakken.", "Stek kyllingbiter gylne i en panne.", "Del tomatene i to og la dem surre med kyllingen i 2 min.", "Bland ferdig pasta med pesto, kylling og tomater.", "Topp med ristede kjerner hvis du har."]
+                        },
+                        lunchKid: {
+                            title: "Grove havrelapper",
+                            desc: "Lag røren kvelden før for superrask steking om morgenen.",
+                            servings: 1,
+                            time: "15 min",
+                            ingredients: ["1 egg", "1 dl havregryn", "0.5 dl melk (eller havremelk)", "0.5 ts bakepulver", "Litt kardemomme"],
+                            steps: ["Bland alle ingrediensene og la svelle i 10 min (viktig!).", "Stek små lapper i pannen på middels varme.", "Avkjøl på rist.", "Send med brunostskiver eller litt syltetøy ved siden av."]
+                        },
+                        lunchAdult: {
+                            title: "Egg & Makrell",
+                            desc: "Omega-3 bombe for hjernen.",
+                            servings: 1,
+                            time: "10 min",
+                            ingredients: ["2 skiver grovbrød", "1 boks makrell i tomat", "1 hardkokt egg", "Agurkskiver", "Salt og pepper"],
+                            steps: ["Kok egget (8-9 min).", "Fordel makrell på den ene skiven.", "Del egget i skiver og ha på den andre (eller oppå makrellen).", "Pynt med agurk."]
+                        }
                     }
                 },
                 {
@@ -147,15 +194,32 @@
                     dinner: "Hjemmelaget tomatsuppe med egg (og linser!)",
                     iconName: "chef-hat",
                     color: "text-red-500",
-                    // Bilde: Tomatsuppe
                     image: "https://images.unsplash.com/photo-1576098762557-4f0165780287?q=80&w=800&auto=format&fit=crop",
-                    recipe: {
-                        title: 'Tomatsuppe med "skjulte" linser',
-                        desc: 'En superhelt-suppe som lurer inn masse næring!',
-                        servings: 4,
-                        time: "25 min",
-                        ingredients: ["1 ss olivenolje", "1 gul løk, finhakket", "2 fedd hvitløk, hakket", "2 store gulrøtter, i terninger", "1 dl tørre røde linser (skylt)", "2 bokser hakkede tomater", "7-8 dl grønnsakskraft", "1 ts sukker eller honning", "0.5 dl fløte/kokosmelk (valgfritt)"],
-                        steps: ["Varm oljen i en kjele. Stek løk og hvitløk mykt. Ha i gulrot og surr i 1 min.", "Tilsett tomater, kraft og linser. Kok opp.", "La småkoke under lokk i 15-20 min til alt er mørt.", "Kjør suppen helt glatt med stavmikser.", "Rør inn fløte og smak til med salt, pepper og sukker.", "Server med egg og godt brød!"]
+                    recipes: {
+                        dinner: {
+                            title: 'Tomatsuppe med "skjulte" linser',
+                            desc: 'En superhelt-suppe som lurer inn masse næring!',
+                            servings: 4,
+                            time: "25 min",
+                            ingredients: ["1 ss olivenolje", "1 gul løk, finhakket", "2 fedd hvitløk, hakket", "2 store gulrøtter, i terninger", "1 dl tørre røde linser (skylt)", "2 bokser hakkede tomater", "7-8 dl grønnsakskraft", "1 ts sukker eller honning", "0.5 dl fløte/kokosmelk (valgfritt)"],
+                            steps: ["Varm oljen i en kjele. Stek løk og hvitløk mykt. Ha i gulrot og surr i 1 min.", "Tilsett tomater, kraft og linser. Kok opp.", "La småkoke under lokk i 15-20 min til alt er mørt.", "Kjør suppen helt glatt med stavmikser.", "Rør inn fløte og smak til med salt, pepper og sukker.", "Server med egg og godt brød!"]
+                        },
+                        lunchKid: {
+                            title: "Leverpostei-skive",
+                            desc: "Klassikeren med masse jern.",
+                            servings: 1,
+                            time: "3 min",
+                            ingredients: ["2 skiver grovbrød", "Godt lag med leverpostei", "Sylteagurk eller rødbeter", "Litt majones (valgfritt)"],
+                            steps: ["Smør leverpostei på brødet.", "Topp med rødbeter eller sylteagurk for litt syre og krønsj."]
+                        },
+                        lunchAdult: {
+                            title: "Grønn kikertsalat",
+                            desc: "Enkel, mettende og vegansk.",
+                            servings: 1,
+                            time: "5 min",
+                            ingredients: ["En god neve ruccola", "1/2 avokado i terninger", "1/2 boks kikerter (skylt)", "Gresskarkjerner", "Olivenolje", "Flaksalt"],
+                            steps: ["Skyll kikertene godt i kaldt vann.", "Bland ruccola, avokado og kikerter i en boks.", "Dryss over gresskarkjerner.", "Ta med olivenolje i en liten beholder eller hell over rett før du går."]
+                        }
                     }
                 },
                 {
@@ -166,15 +230,32 @@
                     dinner: "Fisketaco med torsk & mangosalsa",
                     iconName: "fish",
                     color: "text-purple-500",
-                    // Bilde: Taco/Fisketaco
                     image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=800&auto=format&fit=crop",
-                    recipe: {
-                        title: "Fisketaco med torsk",
-                        desc: "En frisk og sunn start på helgen.",
-                        servings: 4,
-                        time: "25 min",
-                        ingredients: ["500g torskefilet", "Tacokrydder", "Fullkornstortillas", "1 mango (i terninger)", "1/2 rødkål (strimlet)", "Rømme/Kesam", "Lime"],
-                        steps: ["Del torsken i terninger og stek med tacokrydder.", "Kutt opp mango, agurk og finsnitt rødkålen.", "Varm tortillaene i ovnen.", "Server alt i skåler så alle kan lage sin egen taco.", "Husk en skvis lime over fisken!"]
+                    recipes: {
+                        dinner: {
+                            title: "Fisketaco med torsk",
+                            desc: "En frisk og sunn start på helgen.",
+                            servings: 4,
+                            time: "25 min",
+                            ingredients: ["500g torskefilet", "Tacokrydder", "Fullkornstortillas", "1 mango (i terninger)", "1/2 rødkål (strimlet)", "Rømme/Kesam", "Lime"],
+                            steps: ["Del torsken i terninger og stek med tacokrydder.", "Kutt opp mango, agurk og finsnitt rødkålen.", "Varm tortillaene i ovnen.", "Server alt i skåler så alle kan lage sin egen taco.", "Husk en skvis lime over fisken!"]
+                        },
+                        lunchKid: {
+                            title: "Pastasalat",
+                            desc: "Perfekt måte å bruke opp rester av pasta.",
+                            servings: 1,
+                            time: "5 min",
+                            ingredients: ["2 dl kokt fullkornspasta (kald)", "2 ss mais", "1/2 eple i terninger", "Litt agurk", "1 ts rømme eller pesto (valgfritt)"],
+                            steps: ["Bland pasta med mais, eplebiter og agurk.", "Rør gjerne inn litt pesto eller rømme hvis barnet liker det, eller server naturell."]
+                        },
+                        lunchAdult: {
+                            title: "Spinatomelett",
+                            desc: "Proteinrik lunsj.",
+                            servings: 1,
+                            time: "10 min",
+                            ingredients: ["2 egg", "2 ss vann/melk", "En neve fersk spinat", "Litt fetaost", "Salt og pepper"],
+                            steps: ["Pisk egg og væske lett sammen.", "Ha spinat i en varm panne med litt smør til den faller sammen.", "Hell over eggene.", "Dryss over fetaost og la stivne på middels varme.", "Legg på en skive grovbrød ved siden av."]
+                        }
                     }
                 }
             ];
@@ -189,15 +270,20 @@
             // Setter standard oppskrift til Torsdag (Suppen) ved oppstart
             useEffect(() => {
                 if (!currentRecipe) {
-                    setCurrentRecipe(menuData[3].recipe);
+                    setCurrentRecipe(menuData[3].recipes.dinner);
                 }
             }, []);
 
-            // Funksjon som kjøres når man trykker på en dag
-            const handleDayClick = (dayData) => {
-                setCurrentRecipe(dayData.recipe);
-                setActiveTab('recipe');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Håndterer klikk på ulike oppskrifter
+            const handleRecipeClick = (e, recipe) => {
+                // Stopper klikket fra å treffe "kortet" under hvis det er en knapp inni kortet
+                if (e) e.stopPropagation(); 
+                
+                if (recipe) {
+                    setCurrentRecipe(recipe);
+                    setActiveTab('recipe');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
             };
 
             return (
@@ -259,14 +345,15 @@
                             <div className="space-y-6 animate-fade-in">
                                 <div className="text-center mb-8">
                                     <h2 className="text-3xl font-bold text-slate-800 mb-2">Ukesmeny</h2>
-                                    <p className="text-slate-500">Trykk på en dag for å se oppskriften</p>
+                                    <p className="text-slate-500">Trykk på middag eller lunsj for å se oppskriften</p>
                                 </div>
 
                                 <div className="grid gap-6 md:grid-cols-1">
                                     {menuData.map((day, idx) => (
                                         <div 
                                             key={idx} 
-                                            onClick={() => handleDayClick(day)}
+                                            // Hovedklikk på kortet går til middag
+                                            onClick={(e) => handleRecipeClick(e, day.recipes.dinner)}
                                             className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row hover:shadow-lg transition-all cursor-pointer clickable-card group"
                                         >
                                             <div className="h-48 md:w-48 md:h-auto relative bg-slate-200 shrink-0">
@@ -283,8 +370,8 @@
                                                             {day.theme}
                                                         </span>
                                                     </div>
-                                                    <div className="text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Icon name="chevron-right" className="w-5 h-5" />
+                                                    <div className="text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 text-xs font-medium">
+                                                        Se middag <Icon name="chevron-right" className="w-4 h-4" />
                                                     </div>
                                                 </div>
                                                 <div className="space-y-3">
@@ -293,12 +380,28 @@
                                                         <p className="text-sm text-slate-500 flex items-center gap-1"><Icon name="utensils-crossed" className="w-3 h-3" /> Middag</p>
                                                     </div>
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-100">
-                                                        <div className="bg-orange-50 p-2 rounded-lg">
-                                                            <p className="text-xs font-bold text-orange-800 uppercase mb-0.5">Lunsj Barn</p>
+                                                        
+                                                        {/* LUNSJ BARN */}
+                                                        <div 
+                                                            onClick={(e) => handleRecipeClick(e, day.recipes.lunchKid)}
+                                                            className={`p-2 rounded-lg transition-colors border border-transparent ${day.recipes.lunchKid ? 'bg-orange-50 hover:bg-orange-100 hover:border-orange-200 cursor-pointer lunch-card' : 'bg-slate-50'}`}
+                                                        >
+                                                            <div className="flex justify-between items-start">
+                                                                <p className="text-xs font-bold text-orange-800 uppercase mb-0.5">Lunsj Barn</p>
+                                                                {day.recipes.lunchKid && <Icon name="arrow-up-right" className="w-3 h-3 text-orange-400" />}
+                                                            </div>
                                                             <p className="text-sm text-slate-700 leading-snug">{day.lunchKid}</p>
                                                         </div>
-                                                        <div className="bg-blue-50 p-2 rounded-lg">
-                                                            <p className="text-xs font-bold text-blue-800 uppercase mb-0.5">Lunsj Voksen</p>
+
+                                                        {/* LUNSJ VOKSEN */}
+                                                        <div 
+                                                            onClick={(e) => handleRecipeClick(e, day.recipes.lunchAdult)}
+                                                            className={`p-2 rounded-lg transition-colors border border-transparent ${day.recipes.lunchAdult ? 'bg-blue-50 hover:bg-blue-100 hover:border-blue-200 cursor-pointer lunch-card' : 'bg-slate-50 opacity-70'}`}
+                                                        >
+                                                            <div className="flex justify-between items-start">
+                                                                <p className="text-xs font-bold text-blue-800 uppercase mb-0.5">Lunsj Voksen</p>
+                                                                {day.recipes.lunchAdult && <Icon name="arrow-up-right" className="w-3 h-3 text-blue-400" />}
+                                                            </div>
                                                             <p className="text-sm text-slate-700 leading-snug">{day.lunchAdult}</p>
                                                         </div>
                                                     </div>
@@ -363,9 +466,18 @@
                         {activeTab === 'recipe' && currentRecipe && (
                             <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden animate-fade-in">
                                 <div className="h-64 relative bg-slate-800">
-                                    {/* Vi finner riktig bilde ved å søke gjennom menuData */}
+                                    {/* Bruker standardbilde hvis ingen spesifikk bilde er knyttet (bruker dagens middagsbilde som fallback i koden over kan forbedres, men funker her) */}
                                     <img 
-                                        src={menuData.find(d => d.recipe.title === currentRecipe.title)?.image || "https://images.unsplash.com/photo-1547592166-23acbe3b001b?q=80"} 
+                                        src={
+                                            // Prøver å finne bildet som hører til denne retten ved å se på menydataen
+                                            menuData.find(d => 
+                                                d.recipes.dinner.title === currentRecipe.title || 
+                                                (d.recipes.lunchKid && d.recipes.lunchKid.title === currentRecipe.title) || 
+                                                (d.recipes.lunchAdult && d.recipes.lunchAdult.title === currentRecipe.title)
+                                            )?.image || 
+                                            // Fallback for lunsjretter som deler bilde med middag
+                                            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1200"
+                                        }
                                         alt={currentRecipe.title} 
                                         className="w-full h-full object-cover opacity-90" 
                                     />
