@@ -56,7 +56,6 @@
             const [activeTab, setActiveTab] = useState('menu');
             const [checkedItems, setCheckedItems] = useState({});
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-            // State for å holde styr på hvilken oppskrift som skal vises
             const [currentRecipe, setCurrentRecipe] = useState(null);
 
             useEffect(() => {
@@ -83,7 +82,6 @@
                 }
             };
 
-            // DATA - Nå med oppskrifter for lunsj også!
             const menuData = [
                 {
                     day: "Mandag",
@@ -97,6 +95,7 @@
                     recipes: {
                         dinner: {
                             title: "Kremet linsegryte",
+                            image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
                             desc: "En varmende gryte full av fiber og gode smaker.",
                             servings: 4,
                             time: "20 min",
@@ -105,6 +104,7 @@
                         },
                         lunchKid: {
                             title: "Hummus-skiver & grønt",
+                            image: "https://images.unsplash.com/photo-1621532982823-3b1a26d7f6c3?q=80&w=800&auto=format&fit=crop",
                             desc: "Næringsrik lunsj som holder blodsukkeret stabilt.",
                             servings: 1,
                             time: "5 min",
@@ -113,6 +113,7 @@
                         },
                         lunchAdult: {
                             title: "Quinoasalat med feta",
+                            image: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?q=80&w=800&auto=format&fit=crop",
                             desc: "Perfekt å preppe kvelden før.",
                             servings: 1,
                             time: "15 min",
@@ -133,6 +134,7 @@
                     recipes: {
                         dinner: {
                             title: "Ovnsbakt laks & rotgrønt",
+                            image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927?q=80&w=800&auto=format&fit=crop",
                             desc: "Alt i én form - minimalt med oppvask!",
                             servings: 4,
                             time: "30 min",
@@ -141,13 +143,14 @@
                         },
                         lunchKid: {
                             title: "Laksewraps",
+                            image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?q=80&w=800&auto=format&fit=crop",
                             desc: "Enkel måte å få i barna fisk på.",
                             servings: 1,
                             time: "5 min",
                             ingredients: ["1 fullkornslefse/tortilla", "1 ss Snøfrisk eller naturell kremost", "2 skiver røkelaks (eller kalkun)", "Litt spinat eller agurk"],
                             steps: ["Smør lefsen med kremost.", "Legg på laks og grønt.", "Rull tett sammen.", "Del den gjerne i to på midten så den er lettere å holde."]
                         },
-                        lunchAdult: null // Rester - ingen oppskrift
+                        lunchAdult: null 
                     }
                 },
                 {
@@ -162,6 +165,7 @@
                     recipes: {
                         dinner: {
                             title: "Kyllingpanne med pesto",
+                            image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop",
                             desc: "Rask hverdagsmiddag som barna elsker.",
                             servings: 4,
                             time: "20 min",
@@ -170,6 +174,7 @@
                         },
                         lunchKid: {
                             title: "Grove havrelapper",
+                            image: "https://images.unsplash.com/photo-1575853121743-60c24f0a7502?q=80&w=800&auto=format&fit=crop",
                             desc: "Lag røren kvelden før for superrask steking om morgenen.",
                             servings: 1,
                             time: "15 min",
@@ -178,6 +183,7 @@
                         },
                         lunchAdult: {
                             title: "Egg & Makrell",
+                            image: "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?q=80&w=800&auto=format&fit=crop",
                             desc: "Omega-3 bombe for hjernen.",
                             servings: 1,
                             time: "10 min",
@@ -198,6 +204,7 @@
                     recipes: {
                         dinner: {
                             title: 'Tomatsuppe med "skjulte" linser',
+                            image: "https://images.unsplash.com/photo-1576098762557-4f0165780287?q=80&w=800&auto=format&fit=crop",
                             desc: 'En superhelt-suppe som lurer inn masse næring!',
                             servings: 4,
                             time: "25 min",
@@ -206,6 +213,7 @@
                         },
                         lunchKid: {
                             title: "Leverpostei-skive",
+                            image: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?q=80&w=800&auto=format&fit=crop",
                             desc: "Klassikeren med masse jern.",
                             servings: 1,
                             time: "3 min",
@@ -214,6 +222,7 @@
                         },
                         lunchAdult: {
                             title: "Grønn kikertsalat",
+                            image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
                             desc: "Enkel, mettende og vegansk.",
                             servings: 1,
                             time: "5 min",
@@ -234,6 +243,7 @@
                     recipes: {
                         dinner: {
                             title: "Fisketaco med torsk",
+                            image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=800&auto=format&fit=crop",
                             desc: "En frisk og sunn start på helgen.",
                             servings: 4,
                             time: "25 min",
@@ -242,6 +252,7 @@
                         },
                         lunchKid: {
                             title: "Pastasalat",
+                            image: "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?q=80&w=800&auto=format&fit=crop",
                             desc: "Perfekt måte å bruke opp rester av pasta.",
                             servings: 1,
                             time: "5 min",
@@ -250,6 +261,7 @@
                         },
                         lunchAdult: {
                             title: "Spinatomelett",
+                            image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?q=80&w=800&auto=format&fit=crop",
                             desc: "Proteinrik lunsj.",
                             servings: 1,
                             time: "10 min",
@@ -267,18 +279,15 @@
                 "Fisk & Kjøtt": ["Laksefileter (4 stk)", "Torskefilet (400-500g)", "Kyllingfilet (400g)"]
             };
 
-            // Setter standard oppskrift til Torsdag (Suppen) ved oppstart
+            // Initialiserer med Torsdag (Suppen) - nå med bilde!
             useEffect(() => {
                 if (!currentRecipe) {
                     setCurrentRecipe(menuData[3].recipes.dinner);
                 }
             }, []);
 
-            // Håndterer klikk på ulike oppskrifter
             const handleRecipeClick = (e, recipe) => {
-                // Stopper klikket fra å treffe "kortet" under hvis det er en knapp inni kortet
                 if (e) e.stopPropagation(); 
-                
                 if (recipe) {
                     setCurrentRecipe(recipe);
                     setActiveTab('recipe');
@@ -352,7 +361,6 @@
                                     {menuData.map((day, idx) => (
                                         <div 
                                             key={idx} 
-                                            // Hovedklikk på kortet går til middag
                                             onClick={(e) => handleRecipeClick(e, day.recipes.dinner)}
                                             className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row hover:shadow-lg transition-all cursor-pointer clickable-card group"
                                         >
@@ -466,20 +474,10 @@
                         {activeTab === 'recipe' && currentRecipe && (
                             <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden animate-fade-in">
                                 <div className="h-64 relative bg-slate-800">
-                                    {/* Bruker standardbilde hvis ingen spesifikk bilde er knyttet (bruker dagens middagsbilde som fallback i koden over kan forbedres, men funker her) */}
                                     <img 
-                                        src={
-                                            // Prøver å finne bildet som hører til denne retten ved å se på menydataen
-                                            menuData.find(d => 
-                                                d.recipes.dinner.title === currentRecipe.title || 
-                                                (d.recipes.lunchKid && d.recipes.lunchKid.title === currentRecipe.title) || 
-                                                (d.recipes.lunchAdult && d.recipes.lunchAdult.title === currentRecipe.title)
-                                            )?.image || 
-                                            // Fallback for lunsjretter som deler bilde med middag
-                                            "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=1200"
-                                        }
+                                        src={currentRecipe.image} 
                                         alt={currentRecipe.title} 
-                                        className="w-full h-full object-cover opacity-90" 
+                                        className="w-full h-full object-cover opacity-90 transition-opacity duration-300" 
                                     />
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end">
                                         <div className="p-8 text-white">
