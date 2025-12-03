@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Familien Bro - Ukesmeny</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Styles */
+        .tab-btn.active { background-color: white; color: #065f46; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+        .tab-btn.inactive { color: #d1fae5; }
+        .tab-btn.inactive:hover { background-color: #047857; }
+        .checked-item { color: #94a3b8; text-decoration: line-through; text-decoration-color: #cbd5e1; }
+        .checked-icon { color: #10b981; }
+        .unchecked-icon { color: #cbd5e1; }
+
+        /* Animation */
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Print Styles */
+        @media print {
+            header, footer, .no-print { display: none !important; }
+            body { background: white; color: black; }
+            #view-shopping { display: block !important; }
+            #view-menu, #view-recipe { display: none; }
+            .shadow-sm { box-shadow: none !important; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-emerald-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="leaf" class="w-6 h-6 text-emerald-300"></i>
+                <h1 class="text-xl font-bold tracking-tight">Familien Bro</h1>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex gap-1 bg-emerald-800/50 p-1 rounded-lg">
+                <button onclick="switchTab('menu')" id="btn-menu" class="tab-btn active px-3 py-1.5 rounded-md text-sm font-medium transition-all">Ukesmeny</button>
+                <button onclick="switchTab('shopping')" id="btn-shopping" class="tab-btn inactive px-3 py-1.5 rounded-md text-sm font-medium transition-all">Handleliste</button>
+                <button onclick="switchTab('recipe')" id="btn-recipe" class="tab-btn inactive px-3 py-1.5 rounded-md text-sm font-medium transition-all">Oppskrift</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-6 md:py-10 flex-grow w-full">
+        
+        <!-- VIEW: MENU -->
+        <div id="view-menu" class="space-y-6 animate-fade-in">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-slate-800 mb-2">Ukesmeny</h2>
+                <p class="text-slate-500">Middelhavskost for store og små</p>
+            </div>
+            <div id="menu-container" class="grid gap-6 md:grid-cols-1">
+                <!-- Menu items injected by JS -->
+            </div>
+        </div>
+
+        <!-- VIEW: SHOPPING LIST -->
+        <div id="view-shopping" class="hidden max-w-2xl mx-auto animate-fade-in">
+            <div class="flex items-center justify-between mb-6 no-print">
+                <h2 class="text-3xl font-bold text-slate-800">Handleliste</h2>
+                <div class="flex gap-3">
+                    <button onclick="window.print()" class="text-sm text-emerald-600 hover:text-emerald-800 font-medium flex items-center gap-1">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Skriv ut
+                    </button>
+                    <button onclick="resetShoppingList()" class="text-sm text-emerald-600 hover:text-emerald-800 font-medium">Nullstill</button>
+                </div>
+            </div>
+            <div id="shopping-container" class="grid gap-6">
+                <!-- Shopping list items injected by JS -->
+            </div>
+        </div>
+
+        <!-- VIEW: RECIPE -->
+        <div id="view-recipe" class="hidden max-w-2xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden animate-fade-in">
+            <div class="h-64 relative">
+                <img src="https://images.unsplash.com/photo-1547592166-23acbe3b001b?q=80&w=1200&auto=format&fit=crop" alt="Tomatsuppe" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                    <div class="p-8 text-white">
+                        <h2 class="text-3xl font-bold mb-2">Tomatsuppe med "skjulte" linser</h2>
+                        <p class="text-lg text-emerald-200">En superhelt-suppe som lurer inn masse næring!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8">
+                <div class="flex items-center gap-6 mb-8 text-sm text-slate-500 border-b border-slate-100 pb-6">
+                    <div class="flex items-center gap-2"><i data-lucide="chef-hat" class="text-emerald-600 w-5 h-5"></i><span>Enkel</span></div>
+                    <div class="flex items-center gap-2"><i data-lucide="utensils-crossed" class="text-emerald-600 w-5 h-5"></i><span>4 Porsjoner</span></div>
+                    <div class="flex items-center gap-2"><i data-lucide="coffee" class="text-emerald-600 w-5 h-5"></i><span>25 min</span></div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-10">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+                            <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span> Ingredienser
+                        </h3>
+                        <ul class="space-y-2 text-slate-700">
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>1 ss olivenolje</li>
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>1 gul løk, finhakket</li>
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>2 fedd hvitløk, hakket</li>
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>2 store gulrøtter, i terninger</li>
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>1 dl tørre røde linser (skylt)</li>
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>2 bokser hakkede tomater</li>
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>7-8 dl grønnsakskraft</li>
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>1 ts sukker eller honning</li>
+                            <li class="flex items-start gap-2"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>0.5 dl fløte/kokosmelk (valgfritt)</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2">
+                            <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span> Fremgangsmåte
+                        </h3>
+                        <ol class="space-y-4">
+                            <li class="flex gap-4"><span class="font-bold text-emerald-600 text-lg font-mono">1.</span><p class="text-slate-700">Varm oljen i en kjele. Stek løk og hvitløk mykt. Ha i gulrot og surr i 1 min.</p></li>
+                            <li class="flex gap-4"><span class="font-bold text-emerald-600 text-lg font-mono">2.</span><p class="text-slate-700">Tilsett tomater, kraft og linser. Kok opp.</p></li>
+                            <li class="flex gap-4"><span class="font-bold text-emerald-600 text-lg font-mono">3.</span><p class="text-slate-700">La småkoke under lokk i 15-20 min til alt er mørt.</p></li>
+                            <li class="flex gap-4"><span class="font-bold text-emerald-600 text-lg font-mono">4.</span><p class="text-slate-700">Kjør suppen helt glatt med stavmikser.</p></li>
+                            <li class="flex gap-4"><span class="font-bold text-emerald-600 text-lg font-mono">5.</span><p class="text-slate-700">Rør inn fløte og smak til med salt, pepper og sukker.</p></li>
+                            <li class="flex gap-4"><span class="font-bold text-emerald-600 text-lg font-mono">6.</span><p class="text-slate-700">Server med egg og godt brød!</p></li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="mt-8 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <h4 class="font-bold text-blue-800 mb-1 text-sm">💡 Tips fra Familien Bro</h4>
+                    <p class="text-blue-700 text-sm">Server gjerne med fullkornsmakaroni oppi skålen hvis barna er skeptiske til suppe. Det slår alltid an!</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-slate-800 text-slate-400 py-8 mt-12 text-center text-sm">
+        <p>Familien Bro - Ukesmeny</p>
+        <p class="mt-1">Basert på middelhavsdietten 🌱</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Data
+        const menuData = [
+            { day: "Mandag", theme: "Kjøttfri start & Tarmhelse", dinner: "Kremet linsegryte med kokosmelk & nanbrød", lunchKid: "Grovbrød med hummus, paprika & druer", lunchAdult: "Quinoasalat med fetaost & valnøtter", icon: "leaf", color: "text-green-600", image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop" },
+            { day: "Tirsdag", theme: "Fet fisk & Omega-3", dinner: "Ovnsbakt laks med rotgrønnsaker & tzatziki", lunchKid: "Fullkornslefse med snøfrisk & røkelaks", lunchAdult: "Rester av linsegryte", icon: "fish", color: "text-blue-500", image: "https://images.unsplash.com/photo-1467003909585-2f8a7270028d?q=80&w=800&auto=format&fit=crop" },
+            { day: "Onsdag", theme: "Kylling & Fullkorn", dinner: "Kyllingpanne med pesto & fullkornspasta", lunchKid: "Havrelapper med brunost & gulrot", lunchAdult: "Grovbrød med makrell i tomat & egg", icon: "utensils-crossed", color: "text-orange-500", image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop" },
+            { day: "Torsdag", theme: "Suppe & Raske løsninger", dinner: "Hjemmelaget tomatsuppe med egg (og linser!)", lunchKid: "Grovbrød med leverpostei & rødbeter", lunchAdult: "Salat med ruccola, avokado & kikerter", icon: "chef-hat", color: "text-red-500", image: "https://images.unsplash.com/photo-1547592166-23acbe3b001b?q=80&w=800&auto=format&fit=crop" },
+            { day: "Fredag", theme: "Fisketaco (Middelhavs-vri)", dinner: "Fisketaco med torsk & mangosalsa", lunchKid: "Pastasalat med mais & eple", lunchAdult: "Omelett med spinat & fetaost", icon: "fish", color: "text-purple-500", image: "https://images.unsplash.com/photo-1512838243191-e81e8f66f1f9?q=80&w=800&auto=format&fit=crop" }
+        ];
+
+        const shoppingList = {
+            "Frukt & Grønt": ["Agurk (1 stk)", "Paprika (2 stk)", "Spinat (stor pose)", "Cherrytomater (1 pk)", "Søtpoteter (2 stk)", "Gulrøtter (bunt)", "Brokkoli (1 stk)", "Ruccola (1 pk)", "Avokado (1 stk)", "Rødkål (1/2 stk)", "Løk (3 gule)", "Hvitløk", "Ingefær", "Chili", "Druer (1 pk)", "Bananer (2 stk)", "Mango (1 stk)", "Lime & Sitron", "Epler"],
+            "Kjøl & Meieri": ["Røkelaks/Kalkunpålegg", "Makrell i tomat", "Leverpostei", "Brunost", "Snøfrisk", "Fetaost (1 pk)", "Egg (12 stk)", "Melk (1 liter)", "Yoghurt naturell (stor)", "Rømme/Crème Fraiche", "Smør"],
+            "Tørrvarer": ["Hakkede tomater (4 bokser)", "Kikerter (1 boks)", "Kokosmelk (1 boks)", "Mais (liten boks)", "Røde linser (tørre)", "Quinoa/Bulgur", "Fullkornsris", "Fullkornspasta", "Havregryn", "Grovbrød", "Fullkornslefser", "Nanbrød", "Nøtter/Kjerner", "Pesto", "Buljong"],
+            "Fisk & Kjøtt": ["Laksefileter (4 stk)", "Torskefilet (400-500g)", "Kyllingfilet (400g)"]
+        };
+
+        // Render Menu
+        const menuContainer = document.getElementById('menu-container');
+        menuContainer.innerHTML = ''; // Reset container just in case
+        menuData.forEach(day => {
+            menuContainer.innerHTML += `
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
+                    <div class="h-48 md:w-48 md:h-auto relative bg-slate-200 shrink-0">
+                        <img src="${day.image}" class="w-full h-full object-cover">
+                        <div class="absolute top-0 left-0 bg-emerald-600 text-white px-3 py-1 text-sm font-bold rounded-br-lg">${day.day}</div>
+                    </div>
+                    <div class="p-6 flex-1 flex flex-col justify-center">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i data-lucide="${day.icon}" class="w-5 h-5 ${day.color}"></i>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 border border-slate-200 px-2 py-0.5 rounded-full">${day.theme}</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <h3 class="text-lg font-bold text-slate-800 leading-tight mb-1">${day.dinner}</h3>
+                                <p class="text-sm text-slate-500 flex items-center gap-1"><i data-lucide="utensils-crossed" class="w-3 h-3"></i> Middag</p>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                                <div class="bg-orange-50 p-2 rounded-lg">
+                                    <p class="text-xs font-bold text-orange-800 uppercase mb-0.5">Lunsj Barn</p>
+                                    <p class="text-sm text-slate-700 leading-snug">${day.lunchKid}</p>
+                                </div>
+                                <div class="bg-blue-50 p-2 rounded-lg">
+                                    <p class="text-xs font-bold text-blue-800 uppercase mb-0.5">Lunsj Voksen</p>
+                                    <p class="text-sm text-slate-700 leading-snug">${day.lunchAdult}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Render Shopping List
+        const shoppingContainer = document.getElementById('shopping-container');
+        let checkedState = {};
+        
+        function renderShoppingList() {
+            shoppingContainer.innerHTML = '';
+            Object.entries(shoppingList).forEach(([category, items]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'bg-white rounded-xl shadow-sm border border-slate-200 p-6 break-inside-avoid';
+                
+                let itemsHtml = items.map((item, index) => {
+                    const isChecked = checkedState[`${category}-${index}`];
+                    return `
+                        <div onclick="toggleItem('${category}', ${index})" class="flex items-start gap-3 cursor-pointer group select-none mb-3">
+                            <div class="mt-0.5 shrink-0 transition-colors">
+                                <i data-lucide="${isChecked ? 'check-circle-2' : 'circle'}" class="w-5 h-5 ${isChecked ? 'checked-icon' : 'unchecked-icon group-hover:text-emerald-400'}"></i>
+                            </div>
+                            <span class="text-base transition-all ${isChecked ? 'checked-item' : 'text-slate-700'}">${item}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                categoryDiv.innerHTML = `
+                    <h3 class="text-lg font-bold text-emerald-800 border-b border-emerald-100 pb-2 mb-4">${category}</h3>
+                    <div>${itemsHtml}</div>
+                `;
+                shoppingContainer.appendChild(categoryDiv);
+            });
+            lucide.createIcons();
+        }
+
+        function toggleItem(category, index) {
+            const key = `${category}-${index}`;
+            checkedState[key] = !checkedState[key];
+            renderShoppingList();
+        }
+
+        function resetShoppingList() {
+            checkedState = {};
+            renderShoppingList();
+        }
+
+        renderShoppingList();
+
+        // Tab Switching Logic
+        function switchTab(tabName) {
+            // Hide all views
+            ['menu', 'shopping', 'recipe'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`btn-${t}`).classList.replace('active', 'inactive');
+            });
+
+            // Show active view
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`btn-${tabName}`).classList.replace('inactive', 'active');
+            
+            // Re-initialize icons just in case
+            lucide.createIcons();
+        }
+
+        // Initialize Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
