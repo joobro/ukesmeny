@@ -15,7 +15,7 @@
     <!-- 3. Henter Babel (for å oversette koden) -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- 4. Henter Ikoner (Standard Lucide - mer stabilt enn React-versjonen i single-file) -->
+    <!-- 4. Henter Ikoner (Standard Lucide) -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -28,6 +28,11 @@
             body { background: white; }
             .print-only { display: block !important; }
         }
+        
+        /* Click animation */
+        .clickable-card:active {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
@@ -37,12 +42,10 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Hjelpekomponent for ikoner for å sikre at de laster
         const Icon = ({ name, className }) => {
             useEffect(() => {
                 if (window.lucide) window.lucide.createIcons();
-            }, [name]); // Kjør hver gang navnet endres
-
+            }, [name]); 
             return <i data-lucide={name} className={className}></i>;
         };
 
@@ -50,20 +53,18 @@
             const [activeTab, setActiveTab] = useState('menu');
             const [checkedItems, setCheckedItems] = useState({});
             const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            // State for å holde styr på hvilken oppskrift som skal vises
+            const [currentRecipe, setCurrentRecipe] = useState(null);
 
-            // Sikrer at ikoner tegnes opp når vi bytter fane eller laster siden
             useEffect(() => {
                 if (window.lucide) window.lucide.createIcons();
             });
 
-            // Laster handleliste fra minnet
             useEffect(() => {
                 try {
                     const saved = localStorage.getItem('familienBro-handleliste');
                     if (saved) setCheckedItems(JSON.parse(saved));
-                } catch (e) {
-                    console.error("Kunne ikke laste handleliste", e);
-                }
+                } catch (e) { console.error(e); }
             }, []);
 
             const toggleItem = (key) => {
@@ -79,6 +80,7 @@
                 }
             };
 
+            // DATA - Nå med oppskrifter innbakt i hver dag!
             const menuData = [
                 {
                     day: "Mandag",
@@ -88,7 +90,15 @@
                     dinner: "Kremet linsegryte med kokosmelk & nanbrød",
                     iconName: "leaf",
                     color: "text-green-600",
-                    image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop"
+                    image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
+                    recipe: {
+                        title: "Kremet linsegryte",
+                        desc: "En varmende gryte full av fiber og gode smaker.",
+                        servings: 4,
+                        time: "20 min",
+                        ingredients: ["2 dl røde linser (tørre)", "1 boks kokosmelk", "1 boks hakkede tomater", "1 løk + 2 fedd hvitløk", "1 pose spinat", "1 ts ingefær", "Nanbrød til servering"],
+                        steps: ["Fres hakket løk, hvitløk og ingefær i litt olje.", "Tilsett linser, tomater og kokosmelk. Kok opp.", "La småkoke i 15 min til linsene er møre.", "Rør inn spinaten helt til slutt så den faller sammen.", "Smak til med salt/pepper. Server med nanbrød."]
+                    }
                 },
                 {
                     day: "Tirsdag",
@@ -98,7 +108,15 @@
                     dinner: "Ovnsbakt laks med rotgrønnsaker & tzatziki",
                     iconName: "fish",
                     color: "text-blue-500",
-                    image: "https://images.unsplash.com/photo-1467003909585-2f8a7270028d?q=80&w=800&auto=format&fit=crop"
+                    image: "https://images.unsplash.com/photo-1467003909585-2f8a7270028d?q=80&w=800&auto=format&fit=crop",
+                    recipe: {
+                        title: "Ovnsbakt laks & rotgrønt",
+                        desc: "Alt i én form - minimalt med oppvask!",
+                        servings: 4,
+                        time: "30 min",
+                        ingredients: ["4 laksefileter", "2 søtpoteter", "2 gulrøtter", "1 brokkoli", "Olivenolje", "Sitronpepper", "Tzatziki eller rømme"],
+                        steps: ["Sett ovnen på 200 grader.", "Kutt grønnsaker i biter og legg i en ildfast form.", "Hell over litt olje og krydder. Bak i 10 min.", "Legg laksestykkene oppå grønnsakene.", "Bak videre i ca 12-15 min til laksen er ferdig.", "Server med en klatt tzatziki."]
+                    }
                 },
                 {
                     day: "Onsdag",
@@ -108,7 +126,15 @@
                     dinner: "Kyllingpanne med pesto & fullkornspasta",
                     iconName: "utensils-crossed",
                     color: "text-orange-500",
-                    image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop"
+                    image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop",
+                    recipe: {
+                        title: "Kyllingpanne med pesto",
+                        desc: "Rask hverdagsmiddag som barna elsker.",
+                        servings: 4,
+                        time: "20 min",
+                        ingredients: ["400g kyllingfilet", "300g fullkornspasta", "1 glass grønn pesto", "1 pk cherrytomater", "Pinjekjerner (valgfritt)", "Parmesan"],
+                        steps: ["Kok pasta etter anvisning på pakken.", "Stek kyllingbiter gylne i en panne.", "Del tomatene i to og la dem surre med kyllingen i 2 min.", "Bland ferdig pasta med pesto, kylling og tomater.", "Topp med ristede kjerner hvis du har."]
+                    }
                 },
                 {
                     day: "Torsdag",
@@ -118,7 +144,15 @@
                     dinner: "Hjemmelaget tomatsuppe med egg (og linser!)",
                     iconName: "chef-hat",
                     color: "text-red-500",
-                    image: "https://images.unsplash.com/photo-1547592166-23acbe3b001b?q=80&w=800&auto=format&fit=crop"
+                    image: "https://images.unsplash.com/photo-1547592166-23acbe3b001b?q=80&w=800&auto=format&fit=crop",
+                    recipe: {
+                        title: 'Tomatsuppe med "skjulte" linser',
+                        desc: 'En superhelt-suppe som lurer inn masse næring!',
+                        servings: 4,
+                        time: "25 min",
+                        ingredients: ["1 ss olivenolje", "1 gul løk, finhakket", "2 fedd hvitløk, hakket", "2 store gulrøtter, i terninger", "1 dl tørre røde linser (skylt)", "2 bokser hakkede tomater", "7-8 dl grønnsakskraft", "1 ts sukker eller honning", "0.5 dl fløte/kokosmelk (valgfritt)"],
+                        steps: ["Varm oljen i en kjele. Stek løk og hvitløk mykt. Ha i gulrot og surr i 1 min.", "Tilsett tomater, kraft og linser. Kok opp.", "La småkoke under lokk i 15-20 min til alt er mørt.", "Kjør suppen helt glatt med stavmikser.", "Rør inn fløte og smak til med salt, pepper og sukker.", "Server med egg og godt brød!"]
+                    }
                 },
                 {
                     day: "Fredag",
@@ -128,7 +162,15 @@
                     dinner: "Fisketaco med torsk & mangosalsa",
                     iconName: "fish",
                     color: "text-purple-500",
-                    image: "https://images.unsplash.com/photo-1512838243191-e81e8f66f1f9?q=80&w=800&auto=format&fit=crop"
+                    image: "https://images.unsplash.com/photo-1512838243191-e81e8f66f1f9?q=80&w=800&auto=format&fit=crop",
+                    recipe: {
+                        title: "Fisketaco med torsk",
+                        desc: "En frisk og sunn start på helgen.",
+                        servings: 4,
+                        time: "25 min",
+                        ingredients: ["500g torskefilet", "Tacokrydder", "Fullkornstortillas", "1 mango (i terninger)", "1/2 rødkål (strimlet)", "Rømme/Kesam", "Lime"],
+                        steps: ["Del torsken i terninger og stek med tacokrydder.", "Kutt opp mango, agurk og finsnitt rødkålen.", "Varm tortillaene i ovnen.", "Server alt i skåler så alle kan lage sin egen taco.", "Husk en skvis lime over fisken!"]
+                    }
                 }
             ];
 
@@ -139,12 +181,18 @@
                 "Fisk & Kjøtt": ["Laksefileter (4 stk)", "Torskefilet (400-500g)", "Kyllingfilet (400g)"]
             };
 
-            const recipe = {
-                title: 'Tomatsuppe med "skjulte" linser',
-                desc: 'En superhelt-suppe som lurer inn masse næring!',
-                servings: 4,
-                ingredients: ["1 ss olivenolje", "1 gul løk, finhakket", "2 fedd hvitløk, hakket", "2 store gulrøtter, i terninger", "1 dl tørre røde linser (skylt)", "2 bokser hakkede tomater", "7-8 dl grønnsakskraft", "1 ts sukker eller honning", "0.5 dl fløte/kokosmelk (valgfritt)"],
-                steps: ["Varm oljen i en kjele. Stek løk og hvitløk mykt. Ha i gulrot og surr i 1 min.", "Tilsett tomater, kraft og linser. Kok opp.", "La småkoke under lokk i 15-20 min til alt er mørt.", "Kjør suppen helt glatt med stavmikser.", "Rør inn fløte og smak til med salt, pepper og sukker.", "Server med egg og godt brød!"]
+            // Setter standard oppskrift til Torsdag (Suppen) ved oppstart
+            useEffect(() => {
+                if (!currentRecipe) {
+                    setCurrentRecipe(menuData[3].recipe);
+                }
+            }, []);
+
+            // Funksjon som kjøres når man trykker på en dag
+            const handleDayClick = (dayData) => {
+                setCurrentRecipe(dayData.recipe);
+                setActiveTab('recipe');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             };
 
             return (
@@ -206,28 +254,37 @@
                             <div className="space-y-6 animate-fade-in">
                                 <div className="text-center mb-8">
                                     <h2 className="text-3xl font-bold text-slate-800 mb-2">Ukesmeny</h2>
-                                    <p className="text-slate-500">Middelhavskost for store og små</p>
+                                    <p className="text-slate-500">Trykk på en dag for å se oppskriften</p>
                                 </div>
 
                                 <div className="grid gap-6 md:grid-cols-1">
                                     {menuData.map((day, idx) => (
-                                        <div key={idx} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row hover:shadow-md transition-shadow">
+                                        <div 
+                                            key={idx} 
+                                            onClick={() => handleDayClick(day)}
+                                            className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col md:flex-row hover:shadow-lg transition-all cursor-pointer clickable-card group"
+                                        >
                                             <div className="h-48 md:w-48 md:h-auto relative bg-slate-200 shrink-0">
-                                                <img src={day.image} alt={day.dinner} className="w-full h-full object-cover" />
+                                                <img src={day.image} alt={day.dinner} className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-500" />
                                                 <div className="absolute top-0 left-0 bg-emerald-600 text-white px-3 py-1 text-sm font-bold rounded-br-lg">
                                                     {day.day}
                                                 </div>
                                             </div>
                                             <div className="p-6 flex-1 flex flex-col justify-center">
-                                                <div className="flex items-center gap-2 mb-3">
-                                                    <Icon name={day.iconName} className={`w-5 h-5 ${day.color}`} />
-                                                    <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 border border-slate-200 px-2 py-0.5 rounded-full">
-                                                        {day.theme}
-                                                    </span>
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <div className="flex items-center gap-2">
+                                                        <Icon name={day.iconName} className={`w-5 h-5 ${day.color}`} />
+                                                        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 border border-slate-200 px-2 py-0.5 rounded-full">
+                                                            {day.theme}
+                                                        </span>
+                                                    </div>
+                                                    <div className="text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <Icon name="chevron-right" className="w-5 h-5" />
+                                                    </div>
                                                 </div>
                                                 <div className="space-y-3">
                                                     <div>
-                                                        <h3 className="text-lg font-bold text-slate-800 leading-tight mb-1">{day.dinner}</h3>
+                                                        <h3 className="text-lg font-bold text-slate-800 leading-tight mb-1 group-hover:text-emerald-700 transition-colors">{day.dinner}</h3>
                                                         <p className="text-sm text-slate-500 flex items-center gap-1"><Icon name="utensils-crossed" className="w-3 h-3" /> Middag</p>
                                                     </div>
                                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-100">
@@ -298,14 +355,19 @@
                         )}
 
                         {/* VIEW: OPPSKRIFT */}
-                        {activeTab === 'recipe' && (
+                        {activeTab === 'recipe' && currentRecipe && (
                             <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-100 overflow-hidden animate-fade-in">
-                                <div className="h-64 relative">
-                                    <img src="https://images.unsplash.com/photo-1547592166-23acbe3b001b?q=80&w=1200&auto=format&fit=crop" alt="Tomatsuppe" className="w-full h-full object-cover" />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end">
+                                <div className="h-64 relative bg-slate-800">
+                                    {/* Vi finner riktig bilde ved å søke gjennom menuData */}
+                                    <img 
+                                        src={menuData.find(d => d.recipe.title === currentRecipe.title)?.image || "https://images.unsplash.com/photo-1547592166-23acbe3b001b?q=80"} 
+                                        alt={currentRecipe.title} 
+                                        className="w-full h-full object-cover opacity-90" 
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end">
                                         <div className="p-8 text-white">
-                                            <h2 className="text-3xl font-bold mb-2">{recipe.title}</h2>
-                                            <p className="text-lg text-emerald-200">{recipe.desc}</p>
+                                            <h2 className="text-3xl font-bold mb-2">{currentRecipe.title}</h2>
+                                            <p className="text-lg text-emerald-200">{currentRecipe.desc}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -313,8 +375,8 @@
                                 <div className="p-8">
                                     <div className="flex items-center gap-6 mb-8 text-sm text-slate-500 border-b border-slate-100 pb-6">
                                         <div className="flex items-center gap-2"><Icon name="chef-hat" className="text-emerald-600 w-5 h-5" /><span>Enkel</span></div>
-                                        <div className="flex items-center gap-2"><Icon name="utensils-crossed" className="text-emerald-600 w-5 h-5" /><span>{recipe.servings} Porsjoner</span></div>
-                                        <div className="flex items-center gap-2"><Icon name="coffee" className="text-emerald-600 w-5 h-5" /><span>25 min</span></div>
+                                        <div className="flex items-center gap-2"><Icon name="utensils-crossed" className="text-emerald-600 w-5 h-5" /><span>{currentRecipe.servings} Porsjoner</span></div>
+                                        <div className="flex items-center gap-2"><Icon name="coffee" className="text-emerald-600 w-5 h-5" /><span>{currentRecipe.time}</span></div>
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-10">
@@ -324,7 +386,7 @@
                                                 Ingredienser
                                             </h3>
                                             <ul className="space-y-2 text-slate-700">
-                                                {recipe.ingredients.map((ing, i) => (
+                                                {currentRecipe.ingredients.map((ing, i) => (
                                                     <li key={i} className="flex items-start gap-2">
                                                         <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full mt-2 shrink-0"></span>
                                                         {ing}
@@ -339,7 +401,7 @@
                                                 Fremgangsmåte
                                             </h3>
                                             <ol className="space-y-4">
-                                                {recipe.steps.map((step, i) => (
+                                                {currentRecipe.steps.map((step, i) => (
                                                     <li key={i} className="flex gap-4">
                                                         <span className="font-bold text-emerald-600 text-lg font-mono">{i + 1}.</span>
                                                         <p className="text-slate-700">{step}</p>
@@ -352,8 +414,17 @@
                                     <div className="mt-8 bg-blue-50 p-4 rounded-lg border border-blue-100">
                                         <h4 className="font-bold text-blue-800 mb-1 text-sm">💡 Tips fra Familien Bro</h4>
                                         <p className="text-blue-700 text-sm">
-                                            Server gjerne med fullkornsmakaroni oppi skålen hvis barna er skeptiske til suppe. Det slår alltid an!
+                                            Husk å sjekke handlelisten for å se om du mangler noe til denne retten!
                                         </p>
+                                    </div>
+
+                                    <div className="mt-6 pt-6 border-t border-slate-100 text-center md:hidden">
+                                        <button 
+                                            onClick={() => setActiveTab('menu')}
+                                            className="text-emerald-600 font-medium hover:text-emerald-800 text-sm flex items-center justify-center gap-2 w-full p-2"
+                                        >
+                                            <Icon name="arrow-left" className="w-4 h-4" /> Tilbake til menyen
+                                        </button>
                                     </div>
                                 </div>
                             </div>
