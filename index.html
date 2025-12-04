@@ -24,10 +24,9 @@
         .clickable-card:active { transform: scale(0.98); }
         .lunch-card:hover { filter: brightness(0.95); }
         
-        /* Checkbox sjekk-animasjon */
         .step-checked {
             text-decoration: line-through;
-            color: #a8a29e; /* stone-400 */
+            color: #a8a29e;
             transition: all 0.3s ease;
         }
 
@@ -38,7 +37,7 @@
         }
         .timer-finished {
             animation: pulse-red 2s infinite;
-            background-color: #7f1d1d; /* red-900 */
+            background-color: #7f1d1d;
         }
     </style>
 </head>
@@ -47,33 +46,26 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // --- LYDEFFEKT (Base64 for enkelhet i én fil) ---
-        // En enkel "ding-dong" lyd
-        const ALARM_SOUND = "data:audio/wav;base64,UklGRl9vT1BXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"; // Kortversjon for demo, i en ekte app ville vi brukt en lengre base64 eller mp3-fil.
-        // For å sikre at lyden faktisk virker bra bruker vi en oscillator i stedet, da det er mer robust uten eksterne filer.
-        
+        // --- LYDEFFEKT ---
         const playAlarmSound = () => {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (!AudioContext) return;
-            
             const ctx = new AudioContext();
+            
+            // Ding
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-
             osc.connect(gain);
             gain.connect(ctx.destination);
-
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
-            osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5); // Ned til A4
-            
+            osc.frequency.setValueAtTime(880, ctx.currentTime); 
+            osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5); 
             gain.gain.setValueAtTime(0.5, ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-
             osc.start();
             osc.stop(ctx.currentTime + 0.5);
             
-            // Et ekstra "ding" etterpå
+            // Dong
             setTimeout(() => {
                 const osc2 = ctx.createOscillator();
                 const gain2 = ctx.createGain();
@@ -89,447 +81,89 @@
         };
 
         // --- DATA ---
-        
+        // (Dataene er uendret, men jeg inkluderer dem for at appen skal fungere)
         const week1Data = [
             {
-                day: "Mandag",
-                theme: "Fet fisk & Omega-3",
-                lunchKid: "Fullkornslefse med snøfrisk & røkelaks",
-                lunchAdult: "Rester av søndagsmiddag (eller salat)",
-                dinner: "Ovnsbakt laks med rotgrønnsaker & tzatziki",
-                iconName: "fish",
-                color: "text-sky-600",
-                image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927?q=80&w=800&auto=format&fit=crop",
+                day: "Mandag", theme: "Fet fisk & Omega-3", lunchKid: "Fullkornslefse med snøfrisk & røkelaks", lunchAdult: "Rester av søndagsmiddag (eller salat)", dinner: "Ovnsbakt laks med rotgrønnsaker & tzatziki", iconName: "fish", color: "text-sky-600", image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Ovnsbakt laks & rotgrønt",
-                        image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927?q=80&w=800&auto=format&fit=crop",
-                        desc: "Alt i én form - minimalt med oppvask!",
-                        servings: 4,
-                        time: "30 min",
-                        timers: [
-                            { label: "Bak grønnsaker", minutes: 10 },
-                            { label: "Bak laksen ferdig", minutes: 12 }
-                        ],
-                        nutrition: { calories: "520", protein: "38g", fat: "28g", carbs: "25g" },
-                        ingredients: ["4 laksefileter", "2 søtpoteter", "2 gulrøtter", "1 brokkoli", "Olivenolje", "Sitronpepper", "Tzatziki eller rømme"],
-                        steps: ["Sett ovnen på 200 grader.", "Kutt grønnsaker i biter og legg i en ildfast form.", "Hell over litt olje og krydder. Bak i 10 min.", "Legg laksestykkene oppå grønnsakene.", "Bak videre i ca 12-15 min til laksen er ferdig.", "Server med en klatt tzatziki."]
-                    },
-                    lunchKid: {
-                        title: "Laksewraps",
-                        image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?q=80&w=800&auto=format&fit=crop",
-                        desc: "Enkel måte å få i barna fisk på.",
-                        servings: 1,
-                        time: "5 min",
-                        nutrition: { calories: "280", protein: "14g", fat: "15g", carbs: "22g" },
-                        ingredients: ["1 fullkornslefse/tortilla", "1 ss Snøfrisk", "2 skiver røkelaks", "Litt spinat"],
-                        steps: ["Smør lefsen med kremost.", "Legg på laks og grønt.", "Rull tett sammen."]
-                    },
+                    dinner: { title: "Ovnsbakt laks & rotgrønt", image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927?q=80&w=800&auto=format&fit=crop", desc: "Alt i én form - minimalt med oppvask!", servings: 4, time: "30 min", timers: [{ label: "Bak grønnsaker", minutes: 10 }, { label: "Bak laksen ferdig", minutes: 12 }], nutrition: { calories: "520", protein: "38g", fat: "28g", carbs: "25g" }, ingredients: ["4 laksefileter", "2 søtpoteter", "2 gulrøtter", "1 brokkoli", "Olivenolje", "Sitronpepper", "Tzatziki eller rømme"], steps: ["Sett ovnen på 200 grader.", "Kutt grønnsaker i biter og legg i en ildfast form.", "Hell over litt olje og krydder. Bak i 10 min.", "Legg laksestykkene oppå grønnsakene.", "Bak videre i ca 12-15 min til laksen er ferdig.", "Server med en klatt tzatziki."] },
+                    lunchKid: { title: "Laksewraps", image: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?q=80&w=800&auto=format&fit=crop", desc: "Enkel måte å få i barna fisk på.", servings: 1, time: "5 min", nutrition: { calories: "280", protein: "14g", fat: "15g", carbs: "22g" }, ingredients: ["1 fullkornslefse/tortilla", "1 ss Snøfrisk", "2 skiver røkelaks", "Litt spinat"], steps: ["Smør lefsen med kremost.", "Legg på laks og grønt.", "Rull tett sammen."] },
                     lunchAdult: null 
                 }
             },
             {
-                day: "Tirsdag",
-                theme: "Kjøttfri & Tarmhelse",
-                lunchKid: "Grovbrød med hummus, paprika & druer",
-                lunchAdult: "Rester av Laks (fra mandag)",
-                dinner: "Kremet linsegryte med kokosmelk & nanbrød",
-                iconName: "leaf",
-                color: "text-lime-700",
-                image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
+                day: "Tirsdag", theme: "Kjøttfri & Tarmhelse", lunchKid: "Grovbrød med hummus, paprika & druer", lunchAdult: "Rester av Laks (fra mandag)", dinner: "Kremet linsegryte med kokosmelk & nanbrød", iconName: "leaf", color: "text-lime-700", image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Kremet linsegryte",
-                        image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop",
-                        desc: "En varmende gryte full av fiber og gode smaker.",
-                        servings: 4,
-                        time: "20 min",
-                        timers: [
-                            { label: "Koke linser", minutes: 15 }
-                        ],
-                        nutrition: { calories: "410", protein: "19g", fat: "14g", carbs: "48g" },
-                        ingredients: ["2 dl røde linser (tørre)", "1 boks kokosmelk", "1 boks hakkede tomater", "1 løk + 2 fedd hvitløk", "1 pose spinat", "1 ts ingefær", "Nanbrød til servering"],
-                        steps: ["Fres hakket løk, hvitløk og ingefær i litt olje.", "Tilsett linser, tomater og kokosmelk. Kok opp.", "La småkoke i 15 min til linsene er møre.", "Rør inn spinaten helt til slutt så den faller sammen.", "Smak til med salt/pepper. Server med nanbrød."]
-                    },
-                    lunchKid: {
-                        title: "Hummus-skiver & grønt",
-                        image: "https://images.unsplash.com/photo-1621532982823-3b1a26d7f6c3?q=80&w=800&auto=format&fit=crop",
-                        desc: "Næringsrik lunsj som holder blodsukkeret stabilt.",
-                        servings: 1,
-                        time: "5 min",
-                        nutrition: { calories: "320", protein: "11g", fat: "13g", carbs: "38g" },
-                        ingredients: ["2 skiver grovbrød", "3 ss hummus (kjøpt eller hjemmelaget)", "Paprikastaver", "En liten neve druer"],
-                        steps: ["Smør et godt lag hummus på brødskivene.", "Kutt paprika i staver som er lette å spise.", "Legg ved druer i matboksen."]
-                    },
-                    lunchAdult: {
-                        title: "Lakse-salat (rester)",
-                        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800", 
-                        desc: "Bruk restene fra mandag!",
-                        servings: 1,
-                        time: "5 min",
-                        nutrition: { calories: "400", protein: "30g", fat: "20g", carbs: "15g" },
-                        ingredients: ["Kald laks", "Ruccola/Spinat", "Agurk", "Dressing"],
-                        steps: ["Bland laks og grønnsaker."]
-                    }
+                    dinner: { title: "Kremet linsegryte", image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop", desc: "En varmende gryte full av fiber og gode smaker.", servings: 4, time: "20 min", timers: [{ label: "Koke linser", minutes: 15 }], nutrition: { calories: "410", protein: "19g", fat: "14g", carbs: "48g" }, ingredients: ["2 dl røde linser (tørre)", "1 boks kokosmelk", "1 boks hakkede tomater", "1 løk + 2 fedd hvitløk", "1 pose spinat", "1 ts ingefær", "Nanbrød til servering"], steps: ["Fres hakket løk, hvitløk og ingefær i litt olje.", "Tilsett linser, tomater og kokosmelk. Kok opp.", "La småkoke i 15 min til linsene er møre.", "Rør inn spinaten helt til slutt så den faller sammen.", "Smak til med salt/pepper. Server med nanbrød."] },
+                    lunchKid: { title: "Hummus-skiver & grønt", image: "https://images.unsplash.com/photo-1621532982823-3b1a26d7f6c3?q=80&w=800&auto=format&fit=crop", desc: "Næringsrik lunsj som holder blodsukkeret stabilt.", servings: 1, time: "5 min", nutrition: { calories: "320", protein: "11g", fat: "13g", carbs: "38g" }, ingredients: ["2 skiver grovbrød", "3 ss hummus (kjøpt eller hjemmelaget)", "Paprikastaver", "En liten neve druer"], steps: ["Smør et godt lag hummus på brødskivene.", "Kutt paprika i staver som er lette å spise.", "Legg ved druer i matboksen."] },
+                    lunchAdult: { title: "Lakse-salat (rester)", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800", desc: "Bruk restene fra mandag!", servings: 1, time: "5 min", nutrition: { calories: "400", protein: "30g", fat: "20g", carbs: "15g" }, ingredients: ["Kald laks", "Ruccola/Spinat", "Agurk", "Dressing"], steps: ["Bland laks og grønnsaker."] }
                 }
             },
             {
-                day: "Onsdag",
-                theme: "Kylling & Fullkorn",
-                lunchKid: "Havrelapper med brunost & gulrot",
-                lunchAdult: "Rester av Linsegryte",
-                dinner: "Kyllingpanne med pesto & fullkornspasta",
-                iconName: "utensils-crossed",
-                color: "text-orange-600",
-                image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop",
+                day: "Onsdag", theme: "Kylling & Fullkorn", lunchKid: "Havrelapper med brunost & gulrot", lunchAdult: "Rester av Linsegryte", dinner: "Kyllingpanne med pesto & fullkornspasta", iconName: "utensils-crossed", color: "text-orange-600", image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Kyllingpanne med pesto",
-                        image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop",
-                        desc: "Rask hverdagsmiddag som barna elsker.",
-                        servings: 4,
-                        time: "20 min",
-                        timers: [
-                            { label: "Koke pasta", minutes: 10 },
-                            { label: "Surre kylling & tomat", minutes: 2 }
-                        ],
-                        nutrition: { calories: "580", protein: "42g", fat: "22g", carbs: "48g" },
-                        ingredients: ["400g kyllingfilet", "300g fullkornspasta", "1 glass grønn pesto", "1 pk cherrytomater", "Parmesan"],
-                        steps: ["Kok pasta.", "Stek kyllingbiter gylne.", "Del tomatene i to og la dem surre med kyllingen.", "Bland ferdig pasta med pesto, kylling og tomater."]
-                    },
-                    lunchKid: {
-                        title: "Grove havrelapper",
-                        image: "https://images.unsplash.com/photo-1575853121743-60c24f0a7502?q=80&w=800&auto=format&fit=crop",
-                        desc: "Lag røren kvelden før for superrask steking om morgenen.",
-                        servings: 1,
-                        time: "15 min",
-                        nutrition: { calories: "220", protein: "9g", fat: "7g", carbs: "28g" },
-                        ingredients: ["1 egg", "1 dl havregryn", "0.5 dl melk", "0.5 ts bakepulver"],
-                        steps: ["Bland ingrediensene og la svelle.", "Stek små lapper i pannen."]
-                    },
-                    lunchAdult: {
-                        title: "Linsegryte (rester)",
-                        image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800",
-                        desc: "Varm opp i mikroen.",
-                        servings: 1,
-                        time: "2 min",
-                        nutrition: { calories: "410", protein: "19g", fat: "14g", carbs: "48g" },
-                        ingredients: ["Linsegryte", "Nanbrød"],
-                        steps: ["Varm opp."]
-                    }
+                    dinner: { title: "Kyllingpanne med pesto", image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800&auto=format&fit=crop", desc: "Rask hverdagsmiddag som barna elsker.", servings: 4, time: "20 min", timers: [{ label: "Koke pasta", minutes: 10 }, { label: "Surre kylling & tomat", minutes: 2 }], nutrition: { calories: "580", protein: "42g", fat: "22g", carbs: "48g" }, ingredients: ["400g kyllingfilet", "300g fullkornspasta", "1 glass grønn pesto", "1 pk cherrytomater", "Parmesan"], steps: ["Kok pasta.", "Stek kyllingbiter gylne.", "Del tomatene i to og la dem surre med kyllingen.", "Bland ferdig pasta med pesto, kylling og tomater."] },
+                    lunchKid: { title: "Grove havrelapper", image: "https://images.unsplash.com/photo-1575853121743-60c24f0a7502?q=80&w=800&auto=format&fit=crop", desc: "Lag røren kvelden før for superrask steking om morgenen.", servings: 1, time: "15 min", nutrition: { calories: "220", protein: "9g", fat: "7g", carbs: "28g" }, ingredients: ["1 egg", "1 dl havregryn", "0.5 dl melk", "0.5 ts bakepulver"], steps: ["Bland ingrediensene og la svelle.", "Stek små lapper i pannen."] },
+                    lunchAdult: { title: "Linsegryte (rester)", image: "https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800", desc: "Varm opp i mikroen.", servings: 1, time: "2 min", nutrition: { calories: "410", protein: "19g", fat: "14g", carbs: "48g" }, ingredients: ["Linsegryte", "Nanbrød"], steps: ["Varm opp."] }
                 }
             },
             {
-                day: "Torsdag",
-                theme: "Suppe & Raske løsninger",
-                lunchKid: "Grovbrød med leverpostei & rødbeter",
-                lunchAdult: "Salat med ruccola, avokado & kikerter",
-                dinner: "Hjemmelaget tomatsuppe med egg (og linser!)",
-                iconName: "chef-hat",
-                color: "text-red-500",
-                image: "https://images.unsplash.com/photo-1576098762557-4f0165780287?q=80&w=800&auto=format&fit=crop",
+                day: "Torsdag", theme: "Suppe & Raske løsninger", lunchKid: "Grovbrød med leverpostei & rødbeter", lunchAdult: "Salat med ruccola, avokado & kikerter", dinner: "Hjemmelaget tomatsuppe med egg (og linser!)", iconName: "chef-hat", color: "text-red-500", image: "https://images.unsplash.com/photo-1576098762557-4f0165780287?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: 'Tomatsuppe med "skjulte" linser',
-                        image: "https://images.unsplash.com/photo-1576098762557-4f0165780287?q=80&w=800&auto=format&fit=crop",
-                        desc: 'En superhelt-suppe som lurer inn masse næring!',
-                        servings: 4,
-                        time: "25 min",
-                        timers: [
-                            { label: "Koke suppe", minutes: 20 },
-                            { label: "Koke egg", minutes: 9 }
-                        ],
-                        nutrition: { calories: "340", protein: "16g", fat: "12g", carbs: "36g" },
-                        ingredients: ["1 ss olivenolje", "1 løk & 2 fedd hvitløk", "2 gulrøtter", "1 dl røde linser", "2 bokser hakkede tomater", "8 dl kraft"],
-                        steps: ["Stek løk, hvitløk og gulrot.", "Tilsett tomater, kraft og linser. Kok opp.", "La småkoke i 15-20 min.", "Kjør glatt med stavmikser. Server med egg."]
-                    },
-                    lunchKid: {
-                        title: "Leverpostei-skive",
-                        image: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?q=80&w=800&auto=format&fit=crop",
-                        desc: "Klassikeren med masse jern.",
-                        servings: 1,
-                        time: "3 min",
-                        nutrition: { calories: "260", protein: "11g", fat: "11g", carbs: "26g" },
-                        ingredients: ["2 skiver grovbrød", "Leverpostei", "Sylteagurk/rødbeter"],
-                        steps: ["Smør brødet og pynt med grønt."]
-                    },
-                    lunchAdult: {
-                        title: "Grønn kikertsalat",
-                        image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
-                        desc: "Enkel, mettende og vegansk.",
-                        servings: 1,
-                        time: "5 min",
-                        nutrition: { calories: "360", protein: "13g", fat: "22g", carbs: "24g" },
-                        ingredients: ["Ruccola", "1/2 avokado", "1/2 boks kikerter", "Gresskarkjerner", "Olivenolje"],
-                        steps: ["Bland alt sammen i en boks.", "Hell over litt olje."]
-                    }
+                    dinner: { title: 'Tomatsuppe med "skjulte" linser', image: "https://images.unsplash.com/photo-1576098762557-4f0165780287?q=80&w=800&auto=format&fit=crop", desc: 'En superhelt-suppe som lurer inn masse næring!', servings: 4, time: "25 min", timers: [{ label: "Koke suppe", minutes: 20 }, { label: "Koke egg", minutes: 9 }], nutrition: { calories: "340", protein: "16g", fat: "12g", carbs: "36g" }, ingredients: ["1 ss olivenolje", "1 løk & 2 fedd hvitløk", "2 gulrøtter", "1 dl røde linser", "2 bokser hakkede tomater", "8 dl kraft"], steps: ["Stek løk, hvitløk og gulrot.", "Tilsett tomater, kraft og linser. Kok opp.", "La småkoke i 15-20 min.", "Kjør glatt med stavmikser. Server med egg."] },
+                    lunchKid: { title: "Leverpostei-skive", image: "https://images.unsplash.com/photo-1603048588665-791ca8aea617?q=80&w=800&auto=format&fit=crop", desc: "Klassikeren med masse jern.", servings: 1, time: "3 min", nutrition: { calories: "260", protein: "11g", fat: "11g", carbs: "26g" }, ingredients: ["2 skiver grovbrød", "Leverpostei", "Sylteagurk/rødbeter"], steps: ["Smør brødet og pynt med grønt."] },
+                    lunchAdult: { title: "Grønn kikertsalat", image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop", desc: "Enkel, mettende og vegansk.", servings: 1, time: "5 min", nutrition: { calories: "360", protein: "13g", fat: "22g", carbs: "24g" }, ingredients: ["Ruccola", "1/2 avokado", "1/2 boks kikerter", "Gresskarkjerner", "Olivenolje"], steps: ["Bland alt sammen i en boks.", "Hell over litt olje."] }
                 }
             },
             {
-                day: "Fredag",
-                theme: "Fisketaco (Middelhavs-vri)",
-                lunchKid: "Pastasalat med mais & eple",
-                lunchAdult: "Omelett med spinat & fetaost",
-                dinner: "Fisketaco med torsk & mangosalsa",
-                iconName: "fish",
-                color: "text-purple-600", 
-                image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=800&auto=format&fit=crop",
+                day: "Fredag", theme: "Fisketaco (Middelhavs-vri)", lunchKid: "Pastasalat med mais & eple", lunchAdult: "Omelett med spinat & fetaost", dinner: "Fisketaco med torsk & mangosalsa", iconName: "fish", color: "text-purple-600", image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Fisketaco med torsk",
-                        image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=800&auto=format&fit=crop",
-                        desc: "En frisk og sunn start på helgen.",
-                        servings: 4,
-                        time: "25 min",
-                        nutrition: { calories: "480", protein: "32g", fat: "16g", carbs: "46g" },
-                        ingredients: ["500g torskefilet", "Tacokrydder", "Tortillas", "1 mango", "1/2 rødkål", "Rømme", "Lime"],
-                        steps: ["Del torsken i terninger og stek med tacokrydder.", "Kutt opp mango og rødkål.", "Varm tortillaene.", "Server som taco."]
-                    },
-                    lunchKid: {
-                        title: "Pastasalat",
-                        image: "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?q=80&w=800&auto=format&fit=crop",
-                        desc: "Perfekt måte å bruke opp rester av pasta.",
-                        servings: 1,
-                        time: "5 min",
-                        nutrition: { calories: "290", protein: "9g", fat: "9g", carbs: "40g" },
-                        ingredients: ["Kokt pasta", "Mais", "Eple", "Agurk"],
-                        steps: ["Bland alt sammen."]
-                    },
-                    lunchAdult: {
-                        title: "Spinatomelett",
-                        image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?q=80&w=800&auto=format&fit=crop",
-                        desc: "Proteinrik lunsj.",
-                        servings: 1,
-                        time: "10 min",
-                        nutrition: { calories: "310", protein: "21g", fat: "24g", carbs: "4g" },
-                        ingredients: ["2 egg", "Spinat", "Fetaost"],
-                        steps: ["Stek spinat raskt.", "Hell over eggene og dryss med feta."]
-                    }
+                    dinner: { title: "Fisketaco med torsk", image: "https://images.unsplash.com/photo-1599974579688-8dbdd335c77f?q=80&w=800&auto=format&fit=crop", desc: "En frisk og sunn start på helgen.", servings: 4, time: "25 min", nutrition: { calories: "480", protein: "32g", fat: "16g", carbs: "46g" }, ingredients: ["500g torskefilet", "Tacokrydder", "Tortillas", "1 mango", "1/2 rødkål", "Rømme", "Lime"], steps: ["Del torsken i terninger og stek med tacokrydder.", "Kutt opp mango og rødkål.", "Varm tortillaene.", "Server som taco."] },
+                    lunchKid: { title: "Pastasalat", image: "https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?q=80&w=800&auto=format&fit=crop", desc: "Perfekt måte å bruke opp rester av pasta.", servings: 1, time: "5 min", nutrition: { calories: "290", protein: "9g", fat: "9g", carbs: "40g" }, ingredients: ["Kokt pasta", "Mais", "Eple", "Agurk"], steps: ["Bland alt sammen."] },
+                    lunchAdult: { title: "Spinatomelett", image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?q=80&w=800&auto=format&fit=crop", desc: "Proteinrik lunsj.", servings: 1, time: "10 min", nutrition: { calories: "310", protein: "21g", fat: "24g", carbs: "4g" }, ingredients: ["2 egg", "Spinat", "Fetaost"], steps: ["Stek spinat raskt.", "Hell over eggene og dryss med feta."] }
                 }
             }
         ];
 
         const week2Data = [
             {
-                day: "Mandag",
-                theme: "Fisk & Ingefær-kick",
-                lunchKid: "Matmuffins med ost og skinke",
-                lunchAdult: "Caprese-salat med tomat & mozzarella",
-                dinner: "Laks med ingefær, soya & sesam",
-                iconName: "fish",
-                color: "text-rose-600",
-                image: "https://images.unsplash.com/photo-1543826173-70651703c5a4?q=80&w=800&auto=format&fit=crop",
+                day: "Mandag", theme: "Fisk & Ingefær-kick", lunchKid: "Matmuffins med ost og skinke", lunchAdult: "Caprese-salat med tomat & mozzarella", dinner: "Laks med ingefær, soya & sesam", iconName: "fish", color: "text-rose-600", image: "https://images.unsplash.com/photo-1543826173-70651703c5a4?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Ingefær-glasert Laks",
-                        image: "https://images.unsplash.com/photo-1543826173-70651703c5a4?q=80&w=800&auto=format&fit=crop",
-                        desc: "Smaksrik fiskemiddag som lager seg selv i ovnen.",
-                        servings: 4,
-                        time: "20 min",
-                        timers: [
-                            { label: "Bake laks", minutes: 15 }
-                        ],
-                        nutrition: { calories: "550", protein: "38g", fat: "30g", carbs: "22g" },
-                        ingredients: ["4 laksefileter", "3 ss soyasaus", "1 ss honning", "1 ss revet ingefær", "Sesamfrø", "Brokkoli", "Ris/Nudler"],
-                        steps: ["Bland soya, honning og ingefær.", "Legg laksen i form og hell sausen over.", "Bak i ovnen på 200 grader i 12-15 min.", "Strø over sesamfrø ved servering."]
-                    },
-                    lunchKid: {
-                        title: "Matmuffins",
-                        image: "https://images.unsplash.com/photo-1620063251786-b4d618d35091?q=80&w=800",
-                        desc: "Lag opp på søndag - holder hele uken!",
-                        servings: 12,
-                        time: "30 min",
-                        timers: [
-                            { label: "Steke muffins", minutes: 18 }
-                        ],
-                        nutrition: { calories: "180", protein: "8g", fat: "10g", carbs: "15g" },
-                        ingredients: ["3 egg", "3 dl mel", "1 ts bakepulver", "100g skinke", "100g revet ost", "1 dl melk"],
-                        steps: ["Bland egg og melk.", "Rør inn det tørre og fyllet.", "Stek i muffinsformer på 200 grader i ca 15-20 min."]
-                    },
-                    lunchAdult: {
-                        title: "Caprese Salat",
-                        image: "https://images.unsplash.com/photo-1529312266912-b33cf6227e2f?q=80&w=800&auto=format&fit=crop",
-                        desc: "Enkelt, friskt og italiensk.",
-                        servings: 1,
-                        time: "5 min",
-                        nutrition: { calories: "320", protein: "18g", fat: "24g", carbs: "6g" },
-                        ingredients: ["1 mozzarella-ball", "2 tomater", "Fersk basilikum", "Olivenolje", "Balsamico"],
-                        steps: ["Skjær tomat og mozzarella i skiver.", "Legg lagvis på tallerken.", "Topp med basilikum, olje og litt salt."]
-                    }
+                    dinner: { title: "Ingefær-glasert Laks", image: "https://images.unsplash.com/photo-1543826173-70651703c5a4?q=80&w=800&auto=format&fit=crop", desc: "Smaksrik fiskemiddag som lager seg selv i ovnen.", servings: 4, time: "20 min", timers: [{ label: "Bake laks", minutes: 15 }], nutrition: { calories: "550", protein: "38g", fat: "30g", carbs: "22g" }, ingredients: ["4 laksefileter", "3 ss soyasaus", "1 ss honning", "1 ss revet ingefær", "Sesamfrø", "Brokkoli", "Ris/Nudler"], steps: ["Bland soya, honning og ingefær.", "Legg laksen i form og hell sausen over.", "Bak i ovnen på 200 grader i 12-15 min.", "Strø over sesamfrø ved servering."] },
+                    lunchKid: { title: "Matmuffins", image: "https://images.unsplash.com/photo-1620063251786-b4d618d35091?q=80&w=800", desc: "Lag opp på søndag - holder hele uken!", servings: 12, time: "30 min", timers: [{ label: "Steke muffins", minutes: 18 }], nutrition: { calories: "180", protein: "8g", fat: "10g", carbs: "15g" }, ingredients: ["3 egg", "3 dl mel", "1 ts bakepulver", "100g skinke", "100g revet ost", "1 dl melk"], steps: ["Bland egg og melk.", "Rør inn det tørre og fyllet.", "Stek i muffinsformer på 200 grader i ca 15-20 min."] },
+                    lunchAdult: { title: "Caprese Salat", image: "https://images.unsplash.com/photo-1529312266912-b33cf6227e2f?q=80&w=800&auto=format&fit=crop", desc: "Enkelt, friskt og italiensk.", servings: 1, time: "5 min", nutrition: { calories: "320", protein: "18g", fat: "24g", carbs: "6g" }, ingredients: ["1 mozzarella-ball", "2 tomater", "Fersk basilikum", "Olivenolje", "Balsamico"], steps: ["Skjær tomat og mozzarella i skiver.", "Legg lagvis på tallerken.", "Topp med basilikum, olje og litt salt."] }
                 }
             },
             {
-                day: "Tirsdag",
-                theme: "Gresk Aften",
-                lunchKid: "Fullkornspasta med grønn pesto & erter",
-                lunchAdult: "Rester av Ingefær-laks",
-                dinner: "Kylling Souvlaki med Tzatziki",
-                iconName: "utensils-crossed",
-                color: "text-sky-700",
-                image: "https://images.unsplash.com/photo-1532592309856-1c32483864b4?q=80&w=800&auto=format&fit=crop",
+                day: "Tirsdag", theme: "Gresk Aften", lunchKid: "Fullkornspasta med grønn pesto & erter", lunchAdult: "Rester av Ingefær-laks", dinner: "Kylling Souvlaki med Tzatziki", iconName: "utensils-crossed", color: "text-sky-700", image: "https://images.unsplash.com/photo-1532592309856-1c32483864b4?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Kylling Souvlaki",
-                        image: "https://images.unsplash.com/photo-1532592309856-1c32483864b4?q=80&w=800&auto=format&fit=crop",
-                        desc: "Greske smaker som barna liker.",
-                        servings: 4,
-                        time: "25 min",
-                        nutrition: { calories: "450", protein: "42g", fat: "18g", carbs: "30g" },
-                        ingredients: ["400g kyllingfilet", "Oregano", "Sitron", "Hvitløk", "Tzatziki", "Pita/Lefser", "Agurk & Tomat"],
-                        steps: ["Mariner kyllingbiter i olje, sitron og oregano.", "Stek i panne eller på spyd i ovnen.", "Server i pita med tzatziki og salat."]
-                    },
-                    lunchKid: {
-                        title: "Pesto-pasta",
-                        image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800",
-                        desc: "Kald pasta er super matpakke-mat.",
-                        servings: 1,
-                        time: "5 min",
-                        nutrition: { calories: "350", protein: "10g", fat: "12g", carbs: "50g" },
-                        ingredients: ["Kokt pasta", "1 ss pesto", "Frosne erter (tiner i boksen)"],
-                        steps: ["Bland pasta med pesto og erter.", "Legg gjerne ved noen cherrytomater."]
-                    },
-                    lunchAdult: {
-                        title: "Laks & Brokkoli (rester)",
-                        image: "https://images.unsplash.com/photo-1543826173-70651703c5a4?q=80&w=800",
-                        desc: "Smakene setter seg enda bedre til i dag.",
-                        servings: 1,
-                        time: "2 min",
-                        nutrition: { calories: "550", protein: "38g", fat: "30g", carbs: "22g" },
-                        ingredients: ["Laks", "Ris", "Brokkoli"],
-                        steps: ["Varm opp."]
-                    }
+                    dinner: { title: "Kylling Souvlaki", image: "https://images.unsplash.com/photo-1532592309856-1c32483864b4?q=80&w=800&auto=format&fit=crop", desc: "Greske smaker som barna liker.", servings: 4, time: "25 min", nutrition: { calories: "450", protein: "42g", fat: "18g", carbs: "30g" }, ingredients: ["400g kyllingfilet", "Oregano", "Sitron", "Hvitløk", "Tzatziki", "Pita/Lefser", "Agurk & Tomat"], steps: ["Mariner kyllingbiter i olje, sitron og oregano.", "Stek i panne eller på spyd i ovnen.", "Server i pita med tzatziki og salat."] },
+                    lunchKid: { title: "Pesto-pasta", image: "https://images.unsplash.com/photo-1473093295043-cdd812d0e601?q=80&w=800", desc: "Kald pasta er super matpakke-mat.", servings: 1, time: "5 min", nutrition: { calories: "350", protein: "10g", fat: "12g", carbs: "50g" }, ingredients: ["Kokt pasta", "1 ss pesto", "Frosne erter (tiner i boksen)"], steps: ["Bland pasta med pesto og erter.", "Legg gjerne ved noen cherrytomater."] },
+                    lunchAdult: { title: "Laks & Brokkoli (rester)", image: "https://images.unsplash.com/photo-1543826173-70651703c5a4?q=80&w=800", desc: "Smakene setter seg enda bedre til i dag.", servings: 1, time: "2 min", nutrition: { calories: "550", protein: "38g", fat: "30g", carbs: "22g" }, ingredients: ["Laks", "Ris", "Brokkoli"], steps: ["Varm opp."] }
                 }
             },
             {
-                day: "Onsdag",
-                theme: "Suppe-onsdag",
-                lunchKid: "Yoghurt med granola & bær + knekkebrød",
-                lunchAdult: "Kylling-wrap (rester fra tirsdag)",
-                dinner: "Hvit Minestronesuppe med bønner",
-                iconName: "chef-hat",
-                color: "text-emerald-600",
-                image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=800&auto=format&fit=crop",
+                day: "Onsdag", theme: "Suppe-onsdag", lunchKid: "Yoghurt med granola & bær + knekkebrød", lunchAdult: "Kylling-wrap (rester fra tirsdag)", dinner: "Hvit Minestronesuppe med bønner", iconName: "chef-hat", color: "text-emerald-600", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Hvit Minestrone",
-                        image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=800&auto=format&fit=crop",
-                        desc: "En lys og lett suppe full av grønnsaker.",
-                        servings: 4,
-                        time: "20 min",
-                        timers: [
-                            { label: "Koke poteter møre", minutes: 15 }
-                        ],
-                        nutrition: { calories: "320", protein: "16g", fat: "8g", carbs: "42g" },
-                        ingredients: ["1 boks hvite bønner", "Poteter i terninger", "Gulrot", "Stangselleri", "Grønnsakskraft", "Litt pasta/makaroni"],
-                        steps: ["Kutt alle grønnsaker i små terninger.", "Fres i gryta.", "Hell på kraft og kok til potetene er møre.", "Ha i bønner og pasta mot slutten."]
-                    },
-                    lunchKid: {
-                        title: "Yoghurt-lunsj",
-                        image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=800",
-                        desc: "Friskt og godt.",
-                        servings: 1,
-                        time: "2 min",
-                        nutrition: { calories: "300", protein: "15g", fat: "8g", carbs: "40g" },
-                        ingredients: ["Naturell yoghurt", "Granola", "Bær", "1 knekkebrød med ost"],
-                        steps: ["Ha yoghurt i tett boks, granola ved siden av."]
-                    },
-                    lunchAdult: {
-                        title: "Kylling i pita (rester)",
-                        image: "https://images.unsplash.com/photo-1532592309856-1c32483864b4?q=80&w=800",
-                        desc: "Kald souvlaki er digg!",
-                        servings: 1,
-                        time: "2 min",
-                        nutrition: { calories: "450", protein: "42g", fat: "18g", carbs: "30g" },
-                        ingredients: ["Kylling", "Pita", "Tzatziki"],
-                        steps: ["Pakk inn restene."]
-                    }
+                    dinner: { title: "Hvit Minestrone", image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=800&auto=format&fit=crop", desc: "En lys og lett suppe full av grønnsaker.", servings: 4, time: "20 min", timers: [{ label: "Koke poteter møre", minutes: 15 }], nutrition: { calories: "320", protein: "16g", fat: "8g", carbs: "42g" }, ingredients: ["1 boks hvite bønner", "Poteter i terninger", "Gulrot", "Stangselleri", "Grønnsakskraft", "Litt pasta/makaroni"], steps: ["Kutt alle grønnsaker i små terninger.", "Fres i gryta.", "Hell på kraft og kok til potetene er møre.", "Ha i bønner og pasta mot slutten."] },
+                    lunchKid: { title: "Yoghurt-lunsj", image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=800", desc: "Friskt og godt.", servings: 1, time: "2 min", nutrition: { calories: "300", protein: "15g", fat: "8g", carbs: "40g" }, ingredients: ["Naturell yoghurt", "Granola", "Bær", "1 knekkebrød med ost"], steps: ["Ha yoghurt i tett boks, granola ved siden av."] },
+                    lunchAdult: { title: "Kylling i pita (rester)", image: "https://images.unsplash.com/photo-1532592309856-1c32483864b4?q=80&w=800", desc: "Kald souvlaki er digg!", servings: 1, time: "2 min", nutrition: { calories: "450", protein: "42g", fat: "18g", carbs: "30g" }, ingredients: ["Kylling", "Pita", "Tzatziki"], steps: ["Pakk inn restene."] }
                 }
             },
             {
-                day: "Torsdag",
-                theme: "Anti-inflammatorisk & Gurkemeie",
-                lunchKid: "Fiskekaker i lompe/grovbrød",
-                lunchAdult: "Tunfisksalat med egg & rødløk",
-                dinner: "Gyllen kikertgryte med gurkemeie",
-                iconName: "leaf",
-                color: "text-amber-600",
-                image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop",
+                day: "Torsdag", theme: "Anti-inflammatorisk & Gurkemeie", lunchKid: "Fiskekaker i lompe/grovbrød", lunchAdult: "Tunfisksalat med egg & rødløk", dinner: "Gyllen kikertgryte med gurkemeie", iconName: "leaf", color: "text-amber-600", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Gyllen kikertgryte",
-                        image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop",
-                        desc: "En sunn middag med kraften fra gurkemeie.",
-                        servings: 4,
-                        time: "25 min",
-                        timers: [
-                            { label: "Småkoke", minutes: 15 }
-                        ],
-                        nutrition: { calories: "380", protein: "14g", fat: "12g", carbs: "45g" },
-                        ingredients: ["2 bokser kikerter", "1 ss gurkemeie", "1 boks kokosmelk", "1 løk", "Ingefær (fersk)", "Spinat", "Ris til servering"],
-                        steps: ["Fres løk, hvitløk og revet ingefær i olje.", "Tilsett gurkemeie og la det frese litt.", "Ha i kikerter og kokosmelk. La småkoke i 15 min.", "Vend inn spinat før servering."]
-                    },
-                    lunchKid: {
-                        title: "Fiskekake-lunsj",
-                        image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=800",
-                        desc: "Kald fiskekake er bedre enn du tror!",
-                        servings: 1,
-                        time: "1 min",
-                        nutrition: { calories: "250", protein: "15g", fat: "10g", carbs: "25g" },
-                        ingredients: ["1-2 fiskekaker", "1 lompe eller brødskive", "Ketchup?"],
-                        steps: ["Pakk fiskekaken i lompe eller ha på brød."]
-                    },
-                    lunchAdult: {
-                        title: "Tunfisksalat",
-                        image: "https://images.unsplash.com/photo-1543340904-991f3751a30f?q=80&w=800",
-                        desc: "Proteinbombe.",
-                        servings: 1,
-                        time: "10 min",
-                        nutrition: { calories: "380", protein: "40g", fat: "18g", carbs: "10g" },
-                        ingredients: ["1 boks tunfisk", "1 kokt egg", "Rødløk", "Salatblader", "Litt majones/rømme"],
-                        steps: ["Bland tunfisk med hakket rødløk og litt dressing.", "Server på en seng av salat med eggbåter."]
-                    }
+                    dinner: { title: "Gyllen kikertgryte", image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop", desc: "En sunn middag med kraften fra gurkemeie.", servings: 4, time: "25 min", timers: [{ label: "Småkoke", minutes: 15 }], nutrition: { calories: "380", protein: "14g", fat: "12g", carbs: "45g" }, ingredients: ["2 bokser kikerter", "1 ss gurkemeie", "1 boks kokosmelk", "1 løk", "Ingefær (fersk)", "Spinat", "Ris til servering"], steps: ["Fres løk, hvitløk og revet ingefær i olje.", "Tilsett gurkemeie og la det frese litt.", "Ha i kikerter og kokosmelk. La småkoke i 15 min.", "Vend inn spinat før servering."] },
+                    lunchKid: { title: "Fiskekake-lunsj", image: "https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=800", desc: "Kald fiskekake er bedre enn du tror!", servings: 1, time: "1 min", nutrition: { calories: "250", protein: "15g", fat: "10g", carbs: "25g" }, ingredients: ["1-2 fiskekaker", "1 lompe eller brødskive", "Ketchup?"], steps: ["Pakk fiskekaken i lompe eller ha på brød."] },
+                    lunchAdult: { title: "Tunfisksalat", image: "https://images.unsplash.com/photo-1543340904-991f3751a30f?q=80&w=800", desc: "Proteinbombe.", servings: 1, time: "10 min", nutrition: { calories: "380", protein: "40g", fat: "18g", carbs: "10g" }, ingredients: ["1 boks tunfisk", "1 kokt egg", "Rødløk", "Salatblader", "Litt majones/rømme"], steps: ["Bland tunfisk med hakket rødløk og litt dressing.", "Server på en seng av salat med eggbåter."] }
                 }
             },
             {
-                day: "Fredag",
-                theme: "Middelhavs-Taco",
-                lunchKid: "Polarbrød-pizza (kald)",
-                lunchAdult: "Omelett med tomat & basilikum",
-                dinner: "Halloumi-tacos med mangosalsa",
-                iconName: "smile",
-                color: "text-orange-500",
-                image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?q=80&w=800&auto=format&fit=crop",
+                day: "Fredag", theme: "Middelhavs-Taco", lunchKid: "Polarbrød-pizza (kald)", lunchAdult: "Omelett med tomat & basilikum", dinner: "Halloumi-tacos med mangosalsa", iconName: "smile", color: "text-orange-500", image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?q=80&w=800&auto=format&fit=crop",
                 recipes: {
-                    dinner: {
-                        title: "Halloumi-tacos",
-                        image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?q=80&w=800&auto=format&fit=crop",
-                        desc: "En morsom vri på fredagstacoen.",
-                        servings: 4,
-                        time: "20 min",
-                        nutrition: { calories: "560", protein: "24g", fat: "38g", carbs: "34g" },
-                        ingredients: ["1 pk Halloumi-ost", "Små tortillas", "1 mango", "Avokado/Guacamole", "Chili", "Lime"],
-                        steps: ["Kutt mango og avokado i terninger (salsa).", "Stek skiver av halloumi i pannen til gylne.", "Server i varme tortillas med salsa og lime."]
-                    },
-                    lunchKid: {
-                        title: "Polarbrød-pizza",
-                        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=800",
-                        desc: "Lages kvelden før eller om morgenen.",
-                        servings: 1,
-                        time: "10 min",
-                        nutrition: { calories: "320", protein: "14g", fat: "12g", carbs: "35g" },
-                        ingredients: ["Polarbrød", "Tomatpuré", "Ost", "Skinke"],
-                        steps: ["Smør tomatpuré på polarbrød.", "Ha på ost og skinke.", "Gratiner i ovnen til osten smelter. Avkjøl."]
-                    },
-                    lunchAdult: {
-                        title: "Tomat-omelett",
-                        image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?q=80&w=800",
-                        desc: "Enkel proteinlunsj.",
-                        servings: 1,
-                        time: "10 min",
-                        nutrition: { calories: "300", protein: "20g", fat: "22g", carbs: "5g" },
-                        ingredients: ["2 egg", "Tomater", "Basilikum", "Parmesan"],
-                        steps: ["Pisk egg.", "Stek i panne med tomater.", "Topp med urter."]
-                    }
+                    dinner: { title: "Halloumi-tacos", image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?q=80&w=800&auto=format&fit=crop", desc: "En morsom vri på fredagstacoen.", servings: 4, time: "20 min", nutrition: { calories: "560", protein: "24g", fat: "38g", carbs: "34g" }, ingredients: ["1 pk Halloumi-ost", "Små tortillas", "1 mango", "Avokado/Guacamole", "Chili", "Lime"], steps: ["Kutt mango og avokado i terninger (salsa).", "Stek skiver av halloumi i pannen til gylne.", "Server i varme tortillas med salsa og lime."] },
+                    lunchKid: { title: "Polarbrød-pizza", image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=800", desc: "Lages kvelden før eller om morgenen.", servings: 1, time: "10 min", nutrition: { calories: "320", protein: "14g", fat: "12g", carbs: "35g" }, ingredients: ["Polarbrød", "Tomatpuré", "Ost", "Skinke"], steps: ["Smør tomatpuré på polarbrød.", "Ha på ost og skinke.", "Gratiner i ovnen til osten smelter. Avkjøl."] },
+                    lunchAdult: { title: "Tomat-omelett", image: "https://images.unsplash.com/photo-1510693206972-df098062cb71?q=80&w=800", desc: "Enkel proteinlunsj.", servings: 1, time: "10 min", nutrition: { calories: "300", protein: "20g", fat: "22g", carbs: "5g" }, ingredients: ["2 egg", "Tomater", "Basilikum", "Parmesan"], steps: ["Pisk egg.", "Stek i panne med tomater.", "Topp med urter."] }
                 }
             }
         ];
@@ -548,7 +182,7 @@
             "Fisk & Kjøtt": ["Laksefileter (4)", "Kyllingfilet (400g)", "Fiskekaker"]
         };
 
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useMemo } = React;
 
         const Icon = ({ name, className }) => {
             useEffect(() => {
@@ -557,35 +191,32 @@
             return <i data-lucide={name} className={className}></i>;
         };
 
-        // --- TIMER COMPONENT ---
-        const FloatingTimer = ({ timerState, setTimerState }) => {
+        // --- FLERE TIMERE COMPONENT ---
+        const FloatingTimerList = ({ activeTimers, setActiveTimers }) => {
             useEffect(() => {
-                let interval;
-                if (timerState.active && timerState.time > 0) {
-                    interval = setInterval(() => {
-                        setTimerState(prev => {
-                            if (prev.time <= 1) {
-                                return { ...prev, time: 0, active: false };
-                            }
-                            return { ...prev, time: prev.time - 1 };
-                        });
-                    }, 1000);
-                } else if (timerState.time === 0 && timerState.active === false && timerState.hasStarted) {
-                    // Timer finished
-                    // Vi spiller lyden her
-                    playAlarmSound();
-                    
-                    // Reset 'hasStarted' slik at vi ikke looper lyden
-                    setTimerState(prev => ({ ...prev, hasStarted: false, finished: true }));
-                }
+                const interval = setInterval(() => {
+                    setActiveTimers(prevTimers => prevTimers.map(timer => {
+                        if (!timer.active || timer.finished) return timer;
+                        const newTime = timer.timeRemaining - 1;
+                        if (newTime <= 0) {
+                            return { ...timer, timeRemaining: 0, active: false, finished: true };
+                        }
+                        return { ...timer, timeRemaining: newTime };
+                    }));
+                }, 1000);
                 return () => clearInterval(interval);
-            }, [timerState.active, timerState.time, timerState.hasStarted]);
+            }, []);
 
-            const closeTimer = () => {
-                 setTimerState({time: 0, active: false, hasStarted: false, finished: false});
-            }
+            // Sjekk om noen timere akkurat ble ferdige for å spille lyd
+            useEffect(() => {
+                const finishedTimer = activeTimers.find(t => t.finished && !t.soundPlayed);
+                if (finishedTimer) {
+                    playAlarmSound();
+                    setActiveTimers(prev => prev.map(t => t.id === finishedTimer.id ? {...t, soundPlayed: true} : t));
+                }
+            }, [activeTimers]);
 
-            if (!timerState.hasStarted && !timerState.finished) return null;
+            if (activeTimers.length === 0) return null;
 
             const formatTime = (seconds) => {
                 const mins = Math.floor(seconds / 60);
@@ -593,30 +224,36 @@
                 return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
             };
 
+            const removeTimer = (id) => {
+                setActiveTimers(prev => prev.filter(t => t.id !== id));
+            };
+
+            const toggleTimer = (id) => {
+                setActiveTimers(prev => prev.map(t => t.id === id ? {...t, active: !t.active} : t));
+            };
+
             return (
-                <div className={`fixed bottom-4 right-4 text-white p-4 rounded-xl shadow-2xl flex items-center gap-4 z-50 animate-fade-in border border-stone-700 ${timerState.finished ? 'timer-finished' : 'bg-stone-900'}`}>
-                    <div className="flex flex-col">
-                        <span className="text-xs text-stone-400 uppercase tracking-widest">{timerState.finished ? "Ferdig!" : "Timer"}</span>
-                        <span className="text-2xl font-mono font-bold text-lime-400">
-                            {timerState.finished ? "00:00" : formatTime(timerState.time)}
-                        </span>
-                    </div>
-                    <div className="flex gap-2">
-                        {!timerState.finished && (
-                            <button 
-                                onClick={() => setTimerState({...timerState, active: !timerState.active})}
-                                className="p-2 bg-stone-700 rounded-full hover:bg-stone-600 transition-colors"
-                            >
-                                <Icon name={timerState.active ? "pause" : "play"} className="w-5 h-5" />
-                            </button>
-                        )}
-                        <button 
-                            onClick={closeTimer}
-                            className="p-2 bg-stone-700 rounded-full hover:bg-red-900/50 hover:text-red-400 transition-colors"
-                        >
-                            <Icon name="x" className="w-5 h-5" />
-                        </button>
-                    </div>
+                <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-50 animate-fade-in">
+                    {activeTimers.map(timer => (
+                        <div key={timer.id} className={`text-white p-3 rounded-xl shadow-lg flex items-center gap-3 border border-stone-700 min-w-[200px] justify-between ${timer.finished ? 'timer-finished' : 'bg-stone-900'}`}>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-stone-400 uppercase tracking-widest truncate max-w-[100px]">{timer.label}</span>
+                                <span className="text-xl font-mono font-bold text-lime-400">
+                                    {timer.finished ? "Ferdig!" : formatTime(timer.timeRemaining)}
+                                </span>
+                            </div>
+                            <div className="flex gap-1">
+                                {!timer.finished && (
+                                    <button onClick={() => toggleTimer(timer.id)} className="p-1.5 bg-stone-700 rounded-full hover:bg-stone-600">
+                                        <Icon name={timer.active ? "pause" : "play"} className="w-3 h-3" />
+                                    </button>
+                                )}
+                                <button onClick={() => removeTimer(timer.id)} className="p-1.5 bg-stone-700 rounded-full hover:bg-red-900/50 hover:text-red-400">
+                                    <Icon name="x" className="w-3 h-3" />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             );
         };
@@ -634,19 +271,35 @@
             const [ratings, setRatings] = useState({});
             const [searchQuery, setSearchQuery] = useState("");
             
-            // Timer State (Shared globally)
-            // lagt til hasStarted for å vite om vi skal vise den
-            const [timerState, setTimerState] = useState({ time: 0, active: false, hasStarted: false, finished: false });
+            // Multiple Timers State
+            const [activeTimers, setActiveTimers] = useState([]);
+
+            // Helper: Collect all recipes flat
+            const allRecipes = useMemo(() => {
+                const recipes = [];
+                const add = (rec, type, day, week) => {
+                    if(rec) recipes.push({...rec, type, day, week});
+                };
+                [...week1Data].forEach(d => {
+                    add(d.recipes.dinner, 'Middag', d.day, 1);
+                    add(d.recipes.lunchKid, 'Lunsj (Barn)', d.day, 1);
+                    add(d.recipes.lunchAdult, 'Lunsj (Voksen)', d.day, 1);
+                });
+                [...week2Data].forEach(d => {
+                    add(d.recipes.dinner, 'Middag', d.day, 2);
+                    add(d.recipes.lunchKid, 'Lunsj (Barn)', d.day, 2);
+                    add(d.recipes.lunchAdult, 'Lunsj (Voksen)', d.day, 2);
+                });
+                return recipes;
+            }, []);
 
             // Initialize Lucide icons on render
             useEffect(() => { if (window.lucide) window.lucide.createIcons(); });
 
-            // Load Ratings & Shopping List from LocalStorage
             useEffect(() => {
                 try {
                     const savedList = localStorage.getItem(`familienBro-handleliste-uke${currentWeek}`);
                     if (savedList) setCheckedItems(JSON.parse(savedList));
-                    
                     const savedRatings = localStorage.getItem('familienBro-ratings');
                     if (savedRatings) setRatings(JSON.parse(savedRatings));
                 } catch (e) { console.error(e); }
@@ -655,25 +308,13 @@
             const activeMenuData = currentWeek === 1 ? week1Data : week2Data;
             const activeShoppingList = currentWeek === 1 ? shoppingListWeek1 : shoppingListWeek2;
 
-            // --- FILTER LOGIC FOR SEARCH ---
-            const filteredMenu = activeMenuData.filter(day => {
+            // Search logic (now applies to All Recipes tab)
+            const filteredAllRecipes = allRecipes.filter(r => {
                 const q = searchQuery.toLowerCase();
-                if (!q) return true;
-                
-                const checkRecipe = (r) => {
-                    if (!r) return false;
-                    return r.title.toLowerCase().includes(q) || r.ingredients.some(ing => ing.toLowerCase().includes(q));
-                };
-
-                return (
-                    day.day.toLowerCase().includes(q) ||
-                    checkRecipe(day.recipes.dinner) ||
-                    checkRecipe(day.recipes.lunchKid) ||
-                    checkRecipe(day.recipes.lunchAdult)
-                );
+                return r.title.toLowerCase().includes(q) || r.ingredients.some(i => i.toLowerCase().includes(q));
             });
 
-            // --- HANDLERS ---
+            // Handlers
             const toggleItem = (key) => {
                 const newState = { ...checkedItems, [key]: !checkedItems[key] };
                 setCheckedItems(newState);
@@ -691,8 +332,8 @@
                 if (e) e.stopPropagation(); 
                 if (recipe) {
                     setCurrentRecipe(recipe);
-                    setRecipeServings(recipe.servings); // Reset servings to default
-                    setCompletedSteps(new Set()); // Reset checked steps
+                    setRecipeServings(recipe.servings);
+                    setCompletedSteps(new Set());
                     setActiveTab('recipe');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
@@ -712,20 +353,30 @@
                 setCompletedSteps(newSet);
             };
 
-            // Scale ingredients logic
             const getScaledIngredient = (ing) => {
-                // Heuristic: Try to find the first number in the string and scale it
                 const match = ing.match(/^([\d.,]+)/);
                 if (match && currentRecipe) {
                     const originalVal = parseFloat(match[0].replace(',', '.'));
                     if (!isNaN(originalVal)) {
                         const scaledVal = (originalVal / currentRecipe.servings) * recipeServings;
-                        // Format nicely (no .00)
                         const formatted = Number.isInteger(scaledVal) ? scaledVal : scaledVal.toFixed(1);
                         return ing.replace(match[0], formatted);
                     }
                 }
                 return ing;
+            };
+
+            const addTimer = (minutes, label) => {
+                const newTimer = {
+                    id: Date.now(),
+                    label: label || "Timer",
+                    timeRemaining: minutes * 60,
+                    active: true,
+                    finished: false,
+                    soundPlayed: false
+                };
+                playAlarmSound();
+                setActiveTimers(prev => [...prev, newTimer]);
             };
 
             return (
@@ -737,21 +388,24 @@
                                 <h1 className="text-xl font-bold tracking-tight hidden sm:block">Familien Bro</h1>
                             </div>
                             
-                            <div className="flex bg-lime-950/50 rounded-lg p-1 mx-2">
-                                <button onClick={() => setCurrentWeek(1)} className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${currentWeek === 1 ? 'bg-white text-lime-900 shadow' : 'text-lime-200 hover:text-white'}`}>Uke 1</button>
-                                <button onClick={() => setCurrentWeek(2)} className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${currentWeek === 2 ? 'bg-white text-lime-900 shadow' : 'text-lime-200 hover:text-white'}`}>Uke 2</button>
-                            </div>
+                            {activeTab === 'menu' && (
+                                <div className="flex bg-lime-950/50 rounded-lg p-1 mx-2">
+                                    <button onClick={() => setCurrentWeek(1)} className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${currentWeek === 1 ? 'bg-white text-lime-900 shadow' : 'text-lime-200 hover:text-white'}`}>Uke 1</button>
+                                    <button onClick={() => setCurrentWeek(2)} className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${currentWeek === 2 ? 'bg-white text-lime-900 shadow' : 'text-lime-200 hover:text-white'}`}>Uke 2</button>
+                                </div>
+                            )}
 
                             <nav className="hidden md:flex gap-1 bg-lime-950/30 p-1 rounded-lg">
-                                {['menu', 'shopping', 'recipe'].map((tab) => (
+                                {['menu', 'all_recipes', 'shopping', 'recipe'].map((tab) => (
                                     <button
                                         key={tab}
                                         onClick={() => setActiveTab(tab)}
                                         className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${activeTab === tab ? 'bg-white text-lime-900 shadow-sm' : 'text-lime-100 hover:bg-lime-800'}`}
                                     >
                                         {tab === 'menu' && 'Meny'}
+                                        {tab === 'all_recipes' && 'Oppskrifter'}
                                         {tab === 'shopping' && 'Liste'}
-                                        {tab === 'recipe' && 'Ukens oppskrift'}
+                                        {tab === 'recipe' && 'Visning'}
                                     </button>
                                 ))}
                                 <a href="trening.html" className="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-lime-100 hover:bg-lime-800 flex items-center gap-1">Trening</a>
@@ -765,11 +419,12 @@
                         {mobileMenuOpen && (
                             <div className="md:hidden bg-lime-900 border-t border-lime-700">
                                 <div className="flex flex-col p-2 space-y-1">
-                                    {['menu', 'shopping', 'recipe'].map((tab) => (
+                                    {['menu', 'all_recipes', 'shopping', 'recipe'].map((tab) => (
                                         <button key={tab} onClick={() => { setActiveTab(tab); setMobileMenuOpen(false); }} className={`px-4 py-3 rounded-md text-left font-medium ${activeTab === tab ? 'bg-lime-800 text-white' : 'text-lime-100'}`}>
                                             {tab === 'menu' && '📅 Ukesmeny'}
+                                            {tab === 'all_recipes' && '🍲 Alle Oppskrifter'}
                                             {tab === 'shopping' && '🛒 Handleliste'}
-                                            {tab === 'recipe' && '🍲 Ukens oppskrift'}
+                                            {tab === 'recipe' && '🍳 Visning'}
                                         </button>
                                     ))}
                                     <a href="trening.html" className="px-4 py-3 rounded-md text-left font-medium text-lime-100 hover:bg-lime-800">💪 Trening</a>
@@ -780,35 +435,17 @@
 
                     <main className="max-w-4xl mx-auto px-4 py-6 md:py-10 w-full flex-grow">
                         
-                        {/* GLOBAL FLOATING TIMER */}
-                        <FloatingTimer timerState={timerState} setTimerState={setTimerState} />
+                        <FloatingTimerList activeTimers={activeTimers} setActiveTimers={setActiveTimers} />
 
                         {activeTab === 'menu' && (
                             <div className="space-y-6 animate-fade-in">
-                                <div className="text-center mb-4">
+                                <div className="text-center mb-8">
                                     <h2 className="text-3xl font-bold text-stone-800 mb-2">Ukesmeny - Uke {currentWeek}</h2>
-                                    <p className="text-stone-600 mb-6">Trykk på middag eller lunsj for å se oppskriften</p>
-                                    
-                                    {/* SØK / TØM KJØLESKAPET */}
-                                    <div className="max-w-md mx-auto relative">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <Icon name="search" className="h-5 w-5 text-stone-400" />
-                                        </div>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Tøm kjøleskapet (søk etter ingrediens...)" 
-                                            className="block w-full pl-10 pr-3 py-3 border border-stone-200 rounded-xl leading-5 bg-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-lime-500 shadow-sm"
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
-                                        />
-                                    </div>
+                                    <p className="text-stone-600">Trykk på middag eller lunsj for å se oppskriften</p>
                                 </div>
 
                                 <div className="grid gap-6 md:grid-cols-1">
-                                    {filteredMenu.length === 0 && (
-                                        <div className="text-center py-10 text-stone-500">Ingen oppskrifter funnet med "{searchQuery}" 🥬</div>
-                                    )}
-                                    {filteredMenu.map((day, idx) => (
+                                    {activeMenuData.map((day, idx) => (
                                         <div 
                                             key={idx} 
                                             onClick={(e) => handleRecipeClick(e, day.recipes.dinner)}
@@ -860,6 +497,61 @@
                                                             <p className="text-sm text-stone-700 leading-snug">{day.lunchAdult}</p>
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'all_recipes' && (
+                            <div className="animate-fade-in">
+                                <div className="text-center mb-8">
+                                    <h2 className="text-3xl font-bold text-stone-800 mb-4">Alle Oppskrifter</h2>
+                                    
+                                    {/* SØK / TØM KJØLESKAPET (FLYTTET HIT) */}
+                                    <div className="max-w-md mx-auto relative mb-6">
+                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <Icon name="search" className="h-5 w-5 text-stone-400" />
+                                        </div>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Tøm kjøleskapet (søk etter ingrediens...)" 
+                                            className="block w-full pl-10 pr-3 py-3 border border-stone-200 rounded-xl leading-5 bg-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-lime-500 shadow-sm"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
+                                    {filteredAllRecipes.length === 0 && (
+                                        <div className="text-center py-10 text-stone-500 col-span-full">Ingen oppskrifter funnet med "{searchQuery}" 🥬</div>
+                                    )}
+                                    {filteredAllRecipes.map((recipe, idx) => (
+                                        <div 
+                                            key={idx} 
+                                            onClick={() => handleRecipeClick(null, recipe)}
+                                            className="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden hover:shadow-lg transition-all cursor-pointer flex flex-col"
+                                        >
+                                            <div className="h-40 relative bg-stone-200">
+                                                <img src={recipe.image} alt={recipe.title} className="w-full h-full object-cover" />
+                                                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded text-xs font-bold text-stone-700">
+                                                    Uke {recipe.week} • {recipe.day}
+                                                </div>
+                                            </div>
+                                            <div className="p-4 flex-grow flex flex-col justify-between">
+                                                <div>
+                                                    <span className="text-xs font-bold text-lime-600 uppercase mb-1 block">{recipe.type}</span>
+                                                    <h3 className="font-bold text-stone-800 text-lg leading-tight mb-2">{recipe.title}</h3>
+                                                    <p className="text-sm text-stone-500 line-clamp-2">{recipe.desc}</p>
+                                                </div>
+                                                <div className="mt-4 flex items-center gap-4 text-xs text-stone-400">
+                                                    <div className="flex items-center gap-1"><Icon name="clock" className="w-3 h-3" /> {recipe.time}</div>
+                                                    {ratings[recipe.title] && (
+                                                        <div className="flex items-center gap-1 text-yellow-500"><Icon name="star" className="w-3 h-3 fill-current" /> {ratings[recipe.title]}</div>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -926,7 +618,6 @@
                                                     <p className="text-lg text-lime-200">{currentRecipe.desc}</p>
                                                 </div>
                                                 
-                                                {/* MATDOMMER (RATING) */}
                                                 <div className="flex flex-col items-end">
                                                     <div className="flex gap-1">
                                                         {[1,2,3,4,5].map(star => (
@@ -952,15 +643,11 @@
                                             <div className="flex items-center gap-2"><Icon name="chef-hat" className="text-lime-600 w-5 h-5" /><span>Enkel</span></div>
                                             <div className="flex items-center gap-2"><Icon name="coffee" className="text-lime-600 w-5 h-5" /><span>{currentRecipe.time}</span></div>
                                         </div>
-                                        {/* KJØKKEN TIMER KNAPP */}
                                         <div className="flex flex-wrap gap-2">
                                             {currentRecipe.timers && currentRecipe.timers.map((timer, i) => (
                                                 <button 
                                                     key={i}
-                                                    onClick={() => {
-                                                        playAlarmSound(); // Liten lydfeedback på start
-                                                        setTimerState({ time: timer.minutes * 60, active: true, hasStarted: true, finished: false });
-                                                    }}
+                                                    onClick={() => addTimer(timer.minutes, timer.label)}
                                                     className="flex items-center gap-2 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-full text-stone-700 transition-colors font-medium text-xs"
                                                 >
                                                     <Icon name="timer" className="w-4 h-4" /> {timer.label} ({timer.minutes} min)
@@ -968,7 +655,7 @@
                                             ))}
                                             {(!currentRecipe.timers || currentRecipe.timers.length === 0) && (
                                                 <button 
-                                                    onClick={() => setTimerState({ time: 600, active: true, hasStarted: true, finished: false })}
+                                                    onClick={() => addTimer(10, "Timer")}
                                                     className="flex items-center gap-2 bg-stone-100 hover:bg-stone-200 px-3 py-1.5 rounded-full text-stone-700 transition-colors font-medium text-xs"
                                                 >
                                                     <Icon name="timer" className="w-4 h-4" /> Start timer (10 min)
@@ -977,7 +664,6 @@
                                         </div>
                                     </div>
 
-                                    {/* NÆRINGSINNHOLD */}
                                     {currentRecipe.nutrition && (
                                         <div className="bg-orange-50 rounded-xl p-4 mb-8 border border-orange-100">
                                             <h4 className="text-xs font-bold text-orange-800 uppercase tracking-wider mb-3">Næringsinnhold pr. porsjon (ca.)</h4>
@@ -1003,7 +689,6 @@
                                     )}
 
                                     <div className="grid md:grid-cols-2 gap-10">
-                                        {/* PORSJONSKALKULATOR & INGREDIENSER */}
                                         <div>
                                             <div className="flex items-center justify-between mb-4">
                                                 <h3 className="font-bold text-stone-800 text-lg flex items-center gap-2">
@@ -1027,7 +712,6 @@
                                             </ul>
                                         </div>
 
-                                        {/* KOKEMODUS STEG */}
                                         <div>
                                             <h3 className="font-bold text-stone-800 text-lg mb-4 flex items-center gap-2">
                                                 <span className="bg-lime-100 text-lime-800 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
