@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktiv Familie - Treningsprogram</title>
+    <style>
+        :root {
+            --primary-color: #2c7a7b; /* Teal */
+            --secondary-color: #2b6cb0; /* Blue */
+            --accent-color: #ed8936; /* Orange */
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 40px;
+            background-color: #e6fffa;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .highlight-box {
+            background-color: #ebf8ff;
+            border-left: 5px solid var(--secondary-color);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .dad-section {
+            border: 2px solid var(--accent-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 50px;
+            background-color: #fffaf0;
+        }
+
+        .dad-section h2 {
+            color: #c05621;
+            background-color: transparent;
+            padding: 0;
+        }
+
+        /* Tabeller */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: #fff;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        /* Øvelseskort */
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .exercise-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .exercise-card h4 {
+            color: var(--secondary-color);
+            margin-top: 0;
+        }
+
+        .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 15px; }
+            table, thead, tbody, th, td, tr { display: block; }
+            thead tr { position: absolute; top: -9999px; left: -9999px; }
+            tr { margin-bottom: 15px; border: 1px solid #ccc; }
+            td { border: none; position: relative; padding-left: 50%; }
+            td:before { position: absolute; top: 12px; left: 6px; width: 45%; padding-right: 10px; white-space: nowrap; font-weight: bold; content: attr(data-label); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Treningsuke: Japanese Walking 🇯🇵</h1>
+    <p>Dette programmet kombinerer helsebringende "japansk intervallgang" for hele familien med et spesifisert vektnedgangsprogram for far.</p>
+
+    <h2>👨‍👩‍👧‍👦 Del 1: Familien (Felles)</h2>
+    
+    <div class="highlight-box">
+        <h3>Kjernemetoden: 3-3 Intervall</h3>
+        <p><strong>3 minutter:</strong> Rolig "prate-tempo".<br>
+        <strong>3 minutter:</strong> Rask gange / "Power Walk" (Barna: "Marsj-fart!").</p>
+    </div>
+
+    <h3>Ukeplan for familien</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Dag</th>
+                <th>Aktivitet</th>
+                <th>Beskrivelse</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td data-label="Dag">Mandag</td>
+                <td data-label="Aktivitet">Trafikklys-turen 🚦</td>
+                <td data-label="Beskrivelse">30 min tur. Rødt hus/bil = Gå fort! Blått = Gå rolig.</td>
+            </tr>
+            <tr>
+                <td data-label="Dag">Onsdag</td>
+                <td data-label="Aktivitet">Intervall + Dyrestyrke 🐻</td>
+                <td data-label="Beskrivelse">20 min tur (3 rolig/3 rask) + 10 min styrkelek hjemme.</td>
+            </tr>
+            <tr>
+                <td data-label="Dag">Lørdag</td>
+                <td data-label="Aktivitet">Skogsbad (Shinrin-yoku) 🌲</td>
+                <td data-label="Beskrivelse">60 min i terreng. Fokus på ulendt underlag.</td>
+            </tr>
+            <tr>
+                <td data-label="Dag">Søndag</td>
+                <td data-label="Aktivitet">Aktiv Hvile ⚽</td>
+                <td data-label="Beskrivelse">Lek, ballspill eller sykkeltur.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Barnevennlig Styrke: "Dyreparken"</h3>
+    <div class="exercise-grid">
+        <div class="exercise-card">
+            <span class="icon">🐻</span>
+            <h4>Bjørnegange</h4>
+            <p>Gå på alle fire med rumpa lavt.</p>
+        </div>
+        <div class="exercise-card">
+            <span class="icon">🐸</span>
+            <h4>Froskehopp</h4>
+            <p>Dyp knebøy og hopp fremover.</p>
+        </div>
+        <div class="exercise-card">
+            <span class="icon">🦀</span>
+            <h4>Krabsegange</h4>
+            <p>Gå bakover med magen opp.</p>
