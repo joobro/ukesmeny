@@ -355,6 +355,7 @@
             // Search States
             const [searchTags, setSearchTags] = useState([]);
             const [searchInputValue, setSearchInputValue] = useState("");
+            const [searchMode, setSearchMode] = useState('OR'); // 'OR' (Minst én) | 'AND' (Alle)
             
             // Multiple Timers State
             const [activeTimers, setActiveTimers] = useState([]);
@@ -390,18 +391,25 @@
             const activeMenuData = currentWeek === 1 ? week1Data : week2Data;
             const activeShoppingList = currentWeek === 1 ? shoppingListWeek1 : shoppingListWeek2;
 
-            // Search logic (multi-tag)
+            // Search logic (multi-tag with AND/OR toggle)
             const filteredAllRecipes = allRecipes.filter(r => {
                 if (searchTags.length === 0 && !searchInputValue) return true;
                 
                 const terms = [...searchTags];
                 if (searchInputValue.trim()) terms.push(searchInputValue.trim());
 
-                // Vis hvis oppskriften inneholder MINST én av taggene (OR-logic er ofte best for "tøm kjøleskapet")
-                return terms.some(term => {
+                const checkTerm = (term) => {
                     const q = term.toLowerCase();
                     return r.title.toLowerCase().includes(q) || r.ingredients.some(i => i.toLowerCase().includes(q));
-                });
+                };
+
+                if (searchMode === 'OR') {
+                    // Vis hvis oppskriften inneholder MINST én av taggene
+                    return terms.some(checkTerm);
+                } else {
+                    // Vis hvis oppskriften inneholder ALLE taggene
+                    return terms.every(checkTerm);
+                }
             });
 
             const toggleItem = (key) => {
@@ -600,6 +608,21 @@
                                     
                                     {/* TAG SØK / TØM KJØLESKAPET */}
                                     <div className="max-w-md mx-auto relative mb-6">
+                                        <div className="flex justify-center gap-2 mb-3">
+                                            <button 
+                                                onClick={() => setSearchMode('OR')}
+                                                className={`px-3 py-1 text-xs font-bold rounded-full transition-all border ${searchMode === 'OR' ? 'bg-lime-600 text-white border-lime-600 shadow-sm' : 'bg-white text-stone-500 border-stone-200 hover:bg-stone-50'}`}
+                                            >
+                                                Minst én ingrediens
+                                            </button>
+                                            <button 
+                                                onClick={() => setSearchMode('AND')}
+                                                className={`px-3 py-1 text-xs font-bold rounded-full transition-all border ${searchMode === 'AND' ? 'bg-lime-600 text-white border-lime-600 shadow-sm' : 'bg-white text-stone-500 border-stone-200 hover:bg-stone-50'}`}
+                                            >
+                                                Alle ingredienser
+                                            </button>
+                                        </div>
+
                                         <TagSearchInput 
                                             tags={searchTags} 
                                             setTags={setSearchTags}
@@ -608,7 +631,9 @@
                                             placeholder="Tøm kjøleskapet (skriv ingrediens, trykk enter...)"
                                         />
                                         <p className="text-xs text-stone-400 mt-2 text-center">
-                                            Legg til ingredienser du har (f.eks "Egg", "Tomat"). Vi viser oppskrifter som inneholder minst én av dem.
+                                            {searchMode === 'OR' 
+                                                ? "Viser oppskrifter som inneholder noen av ingrediensene." 
+                                                : "Viser kun oppskrifter som inneholder ALT du har skrevet inn."}
                                         </p>
                                     </div>
                                 </div>
