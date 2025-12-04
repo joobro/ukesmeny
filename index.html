@@ -38,6 +38,7 @@
         .timer-finished {
             animation: pulse-red 2s infinite;
             background-color: #7f1d1d;
+            border-color: #ef4444;
         }
     </style>
 </head>
@@ -46,42 +47,199 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // --- LYDEFFEKT ---
-        const playAlarmSound = () => {
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // --- LYDEFFEKT (Rolig alarm) ---
+        const playCalmAlarm = () => {
             const AudioContext = window.AudioContext || window.webkitAudioContext;
             if (!AudioContext) return;
             const ctx = new AudioContext();
+            const now = ctx.currentTime;
+
+            // En rolig C-dur akkord (C4, E4, G4) arpeggio
+            const notes = [261.63, 329.63, 392.00]; 
             
-            // Ding
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(880, ctx.currentTime); 
-            osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5); 
-            gain.gain.setValueAtTime(0.5, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.5);
-            
-            // Dong
-            setTimeout(() => {
-                const osc2 = ctx.createOscillator();
-                const gain2 = ctx.createGain();
-                osc2.connect(gain2);
-                gain2.connect(ctx.destination);
-                osc2.type = 'triangle';
-                osc2.frequency.setValueAtTime(1760, ctx.currentTime); 
-                gain2.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
-                osc2.start();
-                osc2.stop(ctx.currentTime + 1);
-            }, 400);
+            notes.forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                osc.type = 'sine'; // Sine waves are calmer
+                osc.frequency.setValueAtTime(freq, now + (i * 0.2)); // Staggered start
+                
+                gain.gain.setValueAtTime(0, now + (i * 0.2));
+                gain.gain.linearRampToValueAtTime(0.3, now + (i * 0.2) + 0.1); // Fade in
+                gain.gain.exponentialRampToValueAtTime(0.01, now + (i * 0.2) + 1.5); // Slow fade out
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                
+                osc.start(now + (i * 0.2));
+                osc.stop(now + (i * 0.2) + 2);
+            });
         };
 
-        // --- DATA ---
-        // (Dataene er uendret, men jeg inkluderer dem for at appen skal fungere)
+        const Icon = ({ name, className }) => {
+            useEffect(() => {
+                if (window.lucide) window.lucide.createIcons();
+            }, [name]); 
+            return <i data-lucide={name} className={className}></i>;
+        };
+
+        // --- TAG SEARCH INPUT COMPONENT ---
+        const TagSearchInput = ({ tags, setTags, inputValue, setInputValue, placeholder }) => {
+            const handleKeyDown = (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const trimmedInput = inputValue.trim();
+                    if (trimmedInput && !tags.includes(trimmedInput)) {
+                        setTags([...tags, trimmedInput]);
+                        setInputValue('');
+                    }
+                } else if (e.key === 'Backspace' && !inputValue && tags.length > 0) {
+                    setTags(tags.slice(0, -1));
+                }
+            };
+
+            const removeTag = (tagToRemove) => {
+                setTags(tags.filter(tag => tag !== tagToRemove));
+            };
+
+            return (
+                <div className="flex flex-wrap items-center gap-2 w-full p-2 border border-stone-200 rounded-xl bg-white shadow-sm focus-within:ring-2 focus-within:ring-lime-500 focus-within:border-lime-500">
+                    <div className="pl-2 pointer-events-none text-stone-400">
+                        <Icon name="search" className="h-5 w-5" />
+                    </div>
+                    
+                    {tags.map((tag, index) => (
+                        <span key={index} className="flex items-center gap-1 bg-lime-100 text-lime-800 px-2 py-1 rounded-md text-sm font-medium animate-fade-in">
+                            {tag}
+                            <button 
+                                onClick={() => removeTag(tag)}
+                                className="hover:bg-lime-200 rounded-full p-0.5 transition-colors"
+                            >
+                                <Icon name="x" className="w-3 h-3" />
+                            </button>
+                        </span>
+                    ))}
+                    
+                    <input 
+                        type="text" 
+                        className="flex-grow min-w-[150px] outline-none text-stone-700 placeholder-stone-400 bg-transparent py-1"
+                        placeholder={tags.length === 0 ? placeholder : ""}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                    />
+                </div>
+            );
+        };
+
+        // --- FLERE TIMERE COMPONENT (Med Lyd-Loop) ---
+        const FloatingTimerList = ({ activeTimers, setActiveTimers }) => {
+            const alarmIntervalRef = useRef(null);
+            
+            // Sjekk om noen timere ringer (finished men ikke acknowledged)
+            const isRinging = activeTimers.some(t => t.finished && !t.acknowledged);
+
+            // Timer nedtelling logic
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setActiveTimers(prevTimers => prevTimers.map(timer => {
+                        if (!timer.active || timer.finished) return timer;
+                        const newTime = timer.timeRemaining - 1;
+                        if (newTime <= 0) {
+                            return { ...timer, timeRemaining: 0, active: false, finished: true, acknowledged: false };
+                        }
+                        return { ...timer, timeRemaining: newTime };
+                    }));
+                }, 1000);
+                return () => clearInterval(interval);
+            }, []);
+
+            // ALARM LYD LOOP LOGIC
+            useEffect(() => {
+                if (isRinging) {
+                    // Start loop hvis den ikke går
+                    if (!alarmIntervalRef.current) {
+                        playCalmAlarm(); // Spill med en gang
+                        alarmIntervalRef.current = setInterval(() => {
+                            playCalmAlarm();
+                        }, 4000); // Gjenta hvert 4. sekund
+                    }
+                } else {
+                    // Stopp loop hvis ingen ringer
+                    if (alarmIntervalRef.current) {
+                        clearInterval(alarmIntervalRef.current);
+                        alarmIntervalRef.current = null;
+                    }
+                }
+                
+                // Cleanup ved unmount
+                return () => {
+                    if (alarmIntervalRef.current) clearInterval(alarmIntervalRef.current);
+                };
+            }, [isRinging]);
+
+            if (activeTimers.length === 0) return null;
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            };
+
+            const removeTimer = (id) => {
+                setActiveTimers(prev => prev.filter(t => t.id !== id));
+            };
+
+            const toggleTimer = (id) => {
+                setActiveTimers(prev => prev.map(t => t.id === id ? {...t, active: !t.active} : t));
+            };
+
+            const acknowledgeAlarm = (id) => {
+                // Stopper lyden for denne timeren ved å sette acknowledged = true
+                setActiveTimers(prev => prev.map(t => t.id === id ? {...t, acknowledged: true} : t));
+            };
+
+            return (
+                <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-50 animate-fade-in items-end">
+                    {activeTimers.map(timer => (
+                        <div key={timer.id} className={`text-white p-3 rounded-xl shadow-lg flex items-center gap-3 border border-stone-700 min-w-[220px] justify-between transition-all duration-300 ${timer.finished && !timer.acknowledged ? 'timer-finished scale-105' : 'bg-stone-900'}`}>
+                            <div className="flex flex-col">
+                                <span className="text-[10px] text-stone-400 uppercase tracking-widest truncate max-w-[120px]">{timer.label}</span>
+                                <span className="text-xl font-mono font-bold text-lime-400">
+                                    {timer.finished ? "Tiden er ute!" : formatTime(timer.timeRemaining)}
+                                </span>
+                            </div>
+                            
+                            <div className="flex gap-1">
+                                {timer.finished && !timer.acknowledged ? (
+                                    <button 
+                                        onClick={() => acknowledgeAlarm(timer.id)} 
+                                        className="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-full animate-pulse"
+                                    >
+                                        Skru av
+                                    </button>
+                                ) : (
+                                    <>
+                                        {!timer.finished && (
+                                            <button onClick={() => toggleTimer(timer.id)} className="p-1.5 bg-stone-700 rounded-full hover:bg-stone-600">
+                                                <Icon name={timer.active ? "pause" : "play"} className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                        <button onClick={() => removeTimer(timer.id)} className="p-1.5 bg-stone-700 rounded-full hover:bg-red-900/50 hover:text-red-400">
+                                            <Icon name="x" className="w-4 h-4" />
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // --- DATA (Uendret) ---
         const week1Data = [
             {
                 day: "Mandag", theme: "Fet fisk & Omega-3", lunchKid: "Fullkornslefse med snøfrisk & røkelaks", lunchAdult: "Rester av søndagsmiddag (eller salat)", dinner: "Ovnsbakt laks med rotgrønnsaker & tzatziki", iconName: "fish", color: "text-sky-600", image: "https://images.unsplash.com/photo-1485921325833-c519f76c4927?q=80&w=800&auto=format&fit=crop",
@@ -182,82 +340,6 @@
             "Fisk & Kjøtt": ["Laksefileter (4)", "Kyllingfilet (400g)", "Fiskekaker"]
         };
 
-        const { useState, useEffect, useMemo } = React;
-
-        const Icon = ({ name, className }) => {
-            useEffect(() => {
-                if (window.lucide) window.lucide.createIcons();
-            }, [name]); 
-            return <i data-lucide={name} className={className}></i>;
-        };
-
-        // --- FLERE TIMERE COMPONENT ---
-        const FloatingTimerList = ({ activeTimers, setActiveTimers }) => {
-            useEffect(() => {
-                const interval = setInterval(() => {
-                    setActiveTimers(prevTimers => prevTimers.map(timer => {
-                        if (!timer.active || timer.finished) return timer;
-                        const newTime = timer.timeRemaining - 1;
-                        if (newTime <= 0) {
-                            return { ...timer, timeRemaining: 0, active: false, finished: true };
-                        }
-                        return { ...timer, timeRemaining: newTime };
-                    }));
-                }, 1000);
-                return () => clearInterval(interval);
-            }, []);
-
-            // Sjekk om noen timere akkurat ble ferdige for å spille lyd
-            useEffect(() => {
-                const finishedTimer = activeTimers.find(t => t.finished && !t.soundPlayed);
-                if (finishedTimer) {
-                    playAlarmSound();
-                    setActiveTimers(prev => prev.map(t => t.id === finishedTimer.id ? {...t, soundPlayed: true} : t));
-                }
-            }, [activeTimers]);
-
-            if (activeTimers.length === 0) return null;
-
-            const formatTime = (seconds) => {
-                const mins = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-            };
-
-            const removeTimer = (id) => {
-                setActiveTimers(prev => prev.filter(t => t.id !== id));
-            };
-
-            const toggleTimer = (id) => {
-                setActiveTimers(prev => prev.map(t => t.id === id ? {...t, active: !t.active} : t));
-            };
-
-            return (
-                <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-50 animate-fade-in">
-                    {activeTimers.map(timer => (
-                        <div key={timer.id} className={`text-white p-3 rounded-xl shadow-lg flex items-center gap-3 border border-stone-700 min-w-[200px] justify-between ${timer.finished ? 'timer-finished' : 'bg-stone-900'}`}>
-                            <div className="flex flex-col">
-                                <span className="text-[10px] text-stone-400 uppercase tracking-widest truncate max-w-[100px]">{timer.label}</span>
-                                <span className="text-xl font-mono font-bold text-lime-400">
-                                    {timer.finished ? "Ferdig!" : formatTime(timer.timeRemaining)}
-                                </span>
-                            </div>
-                            <div className="flex gap-1">
-                                {!timer.finished && (
-                                    <button onClick={() => toggleTimer(timer.id)} className="p-1.5 bg-stone-700 rounded-full hover:bg-stone-600">
-                                        <Icon name={timer.active ? "pause" : "play"} className="w-3 h-3" />
-                                    </button>
-                                )}
-                                <button onClick={() => removeTimer(timer.id)} className="p-1.5 bg-stone-700 rounded-full hover:bg-red-900/50 hover:text-red-400">
-                                    <Icon name="x" className="w-3 h-3" />
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            );
-        };
-
         const App = () => {
             const [activeTab, setActiveTab] = useState('menu');
             const [currentWeek, setCurrentWeek] = useState(1);
@@ -269,7 +351,10 @@
             const [recipeServings, setRecipeServings] = useState(4);
             const [completedSteps, setCompletedSteps] = useState(new Set());
             const [ratings, setRatings] = useState({});
-            const [searchQuery, setSearchQuery] = useState("");
+            
+            // Search States
+            const [searchTags, setSearchTags] = useState([]);
+            const [searchInputValue, setSearchInputValue] = useState("");
             
             // Multiple Timers State
             const [activeTimers, setActiveTimers] = useState([]);
@@ -293,9 +378,6 @@
                 return recipes;
             }, []);
 
-            // Initialize Lucide icons on render
-            useEffect(() => { if (window.lucide) window.lucide.createIcons(); });
-
             useEffect(() => {
                 try {
                     const savedList = localStorage.getItem(`familienBro-handleliste-uke${currentWeek}`);
@@ -308,13 +390,20 @@
             const activeMenuData = currentWeek === 1 ? week1Data : week2Data;
             const activeShoppingList = currentWeek === 1 ? shoppingListWeek1 : shoppingListWeek2;
 
-            // Search logic (now applies to All Recipes tab)
+            // Search logic (multi-tag)
             const filteredAllRecipes = allRecipes.filter(r => {
-                const q = searchQuery.toLowerCase();
-                return r.title.toLowerCase().includes(q) || r.ingredients.some(i => i.toLowerCase().includes(q));
+                if (searchTags.length === 0 && !searchInputValue) return true;
+                
+                const terms = [...searchTags];
+                if (searchInputValue.trim()) terms.push(searchInputValue.trim());
+
+                // Vis hvis oppskriften inneholder MINST én av taggene (OR-logic er ofte best for "tøm kjøleskapet")
+                return terms.some(term => {
+                    const q = term.toLowerCase();
+                    return r.title.toLowerCase().includes(q) || r.ingredients.some(i => i.toLowerCase().includes(q));
+                });
             });
 
-            // Handlers
             const toggleItem = (key) => {
                 const newState = { ...checkedItems, [key]: !checkedItems[key] };
                 setCheckedItems(newState);
@@ -373,9 +462,8 @@
                     timeRemaining: minutes * 60,
                     active: true,
                     finished: false,
-                    soundPlayed: false
+                    acknowledged: false // New field for repeating alarm logic
                 };
-                playAlarmSound();
                 setActiveTimers(prev => [...prev, newTimer]);
             };
 
@@ -510,24 +598,26 @@
                                 <div className="text-center mb-8">
                                     <h2 className="text-3xl font-bold text-stone-800 mb-4">Alle Oppskrifter</h2>
                                     
-                                    {/* SØK / TØM KJØLESKAPET (FLYTTET HIT) */}
+                                    {/* TAG SØK / TØM KJØLESKAPET */}
                                     <div className="max-w-md mx-auto relative mb-6">
-                                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                            <Icon name="search" className="h-5 w-5 text-stone-400" />
-                                        </div>
-                                        <input 
-                                            type="text" 
-                                            placeholder="Tøm kjøleskapet (søk etter ingrediens...)" 
-                                            className="block w-full pl-10 pr-3 py-3 border border-stone-200 rounded-xl leading-5 bg-white placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-lime-500 shadow-sm"
-                                            value={searchQuery}
-                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                        <TagSearchInput 
+                                            tags={searchTags} 
+                                            setTags={setSearchTags}
+                                            inputValue={searchInputValue}
+                                            setInputValue={setSearchInputValue}
+                                            placeholder="Tøm kjøleskapet (skriv ingrediens, trykk enter...)"
                                         />
+                                        <p className="text-xs text-stone-400 mt-2 text-center">
+                                            Legg til ingredienser du har (f.eks "Egg", "Tomat"). Vi viser oppskrifter som inneholder minst én av dem.
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
                                     {filteredAllRecipes.length === 0 && (
-                                        <div className="text-center py-10 text-stone-500 col-span-full">Ingen oppskrifter funnet med "{searchQuery}" 🥬</div>
+                                        <div className="text-center py-10 text-stone-500 col-span-full">
+                                            Ingen oppskrifter funnet med disse ingrediensene 🥬
+                                        </div>
                                     )}
                                     {filteredAllRecipes.map((recipe, idx) => (
                                         <div 
