@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aktiv Familie - Treningsprogram</title>
+    <title>Treningsuke - Aktiv Familie</title>
     <style>
         :root {
-            --primary-color: #2c7a7b; /* Teal */
-            --secondary-color: #2b6cb0; /* Blue */
-            --accent-color: #ed8936; /* Orange */
+            --primary-color: #2c7a7b; /* Teal for Family */
+            --dad-color: #c05621; /* Rust/Orange for Dad */
             --bg-color: #f7fafc;
             --card-bg: #ffffff;
             --text-color: #2d3748;
@@ -20,111 +19,121 @@
             color: var(--text-color);
             background-color: var(--bg-color);
             margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        h1, h2, h3 {
-            color: var(--primary-color);
-        }
-
-        h1 {
-            text-align: center;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-
-        h2 {
-            margin-top: 40px;
-            background-color: #e6fffa;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .highlight-box {
-            background-color: #ebf8ff;
-            border-left: 5px solid var(--secondary-color);
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-
-        .dad-section {
-            border: 2px solid var(--accent-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 50px;
-            background-color: #fffaf0;
-        }
-
-        .dad-section h2 {
-            color: #c05621;
-            background-color: transparent;
             padding: 0;
         }
 
+        /* --- NAVIGASJON --- */
+        .navbar {
+            background-color: #ffffff;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        /* Knapp til index.html */
+        .btn-home {
+            background-color: #e2e8f0;
+            color: #4a5568;
+        }
+        .btn-home:hover { background-color: #cbd5e0; }
+
+        /* Faner */
+        .tab-btn {
+            background-color: transparent;
+            color: #718096;
+            border: 2px solid transparent;
+        }
+        
+        .tab-btn:hover { background-color: #edf2f7; }
+
+        .tab-btn.active-family {
+            background-color: #e6fffa;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .tab-btn.active-dad {
+            background-color: #fffaf0;
+            color: var(--dad-color);
+            border-color: var(--dad-color);
+        }
+
+        /* --- INNHOLD CONTAINER --- */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            min-height: 80vh; /* Sikrer at siden ikke hopper for mye */
+        }
+
+        /* Skjuler innhold som ikke er valgt */
+        .tab-content { display: none; animation: fadeIn 0.5s; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2, h3 { margin-top: 0; }
+        
+        /* Fargekoding for overskrifter */
+        #family h1, #family h2, #family h3 { color: var(--primary-color); }
+        #dad h1, #dad h2, #dad h3 { color: var(--dad-color); }
+
+        /* Infoboks */
+        .info-box {
+            background-color: #e6fffa;
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 4px;
+        }
+
         /* Tabeller */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background: #fff;
-        }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; background: #fff; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
 
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
+        /* Spesifikk tabellstyling */
+        #family th { background-color: var(--primary-color); color: white; }
+        #dad th { background-color: var(--dad-color); color: white; }
 
-        th {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        /* Øvelseskort */
+        /* Kort for øvelser */
         .exercise-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-top: 20px;
         }
-
         .exercise-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            background: #fff; border: 1px solid #e2e8f0; padding: 15px;
+            border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        .icon { font-size: 2em; display: block; margin-bottom: 10px; }
 
-        .exercise-card h4 {
-            color: var(--secondary-color);
-            margin-top: 0;
-        }
-
-        .icon {
-            font-size: 2em;
-            margin-bottom: 10px;
-            display: block;
-        }
-
+        /* Mobil-tilpasning */
         @media (max-width: 600px) {
-            .container { padding: 15px; }
+            .navbar { display: flex; flex-direction: column; }
+            .container { padding: 15px; margin: 10px; }
             table, thead, tbody, th, td, tr { display: block; }
             thead tr { position: absolute; top: -9999px; left: -9999px; }
             tr { margin-bottom: 15px; border: 1px solid #ccc; }
@@ -135,64 +144,169 @@
 </head>
 <body>
 
-<div class="container">
-    <h1>Treningsuke: Japanese Walking 🇯🇵</h1>
-    <p>Dette programmet kombinerer helsebringende "japansk intervallgang" for hele familien med et spesifisert vektnedgangsprogram for far.</p>
+    <nav class="navbar">
+        <a href="index.html" class="nav-btn btn-home">⬅ Ukesmeny</a>
+        
+        <button onclick="openTab('family')" id="btn-family" class="nav-btn tab-btn active-family">👨‍👩‍👧‍👦 Familieprogram</button>
+        <button onclick="openTab('dad')" id="btn-dad" class="nav-btn tab-btn">⚖️ Far (Vektnedgang)</button>
+    </nav>
 
-    <h2>👨‍👩‍👧‍👦 Del 1: Familien (Felles)</h2>
-    
-    <div class="highlight-box">
-        <h3>Kjernemetoden: 3-3 Intervall</h3>
-        <p><strong>3 minutter:</strong> Rolig "prate-tempo".<br>
-        <strong>3 minutter:</strong> Rask gange / "Power Walk" (Barna: "Marsj-fart!").</p>
+    <div class="container">
+
+        <div id="family" class="tab-content active">
+            <h1>Treningsuke for Familien</h1>
+            
+            <div class="info-box">
+                <h3>🇯🇵 Hva er Japansk Intervallgang?</h3>
+                <p>Også kjent som <em>Sokuho</em>. Dette er en super-effektiv metode som gir bedre kondisjon og forbrenning enn vanlig gåing.</p>
+                <p><strong>Metoden (3-3 Intervall):</strong></p>
+                <ul>
+                    <li><strong>3 minutter:</strong> Rask gange / Power Walk (Bli andpusten!)</li>
+                    <li><strong>3 minutter:</strong> Rolig "prate-tempo".</li>
+                </ul>
+                <p><em>For barna: Kall det "Trafikklys-leken" eller "Full fart vs. Sneglefart".</em></p>
+            </div>
+
+            <h2>Ukeplan</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dag</th>
+                        <th>Aktivitet</th>
+                        <th>Beskrivelse</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Dag">Mandag</td>
+                        <td data-label="Aktivitet">Trafikklys-turen 🚦</td>
+                        <td data-label="Beskrivelse">30 min. Rødt hus/bil = Løp/gå fort! Blått = Gå rolig.</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Dag">Onsdag</td>
+                        <td data-label="Aktivitet">Intervall + Dyrestyrke 🐻</td>
+                        <td data-label="Beskrivelse">20 min tur (3 rolig/3 rask) + styrkelek hjemme.</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Dag">Lørdag</td>
+                        <td data-label="Aktivitet">Skogsbad (Shinrin-yoku) 🌲</td>
+                        <td data-label="Beskrivelse">60 min i terreng. Fokus på ulendt underlag.</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Dag">Søndag</td>
+                        <td data-label="Aktivitet">Aktiv Hvile ⚽</td>
+                        <td data-label="Beskrivelse">Lek, ballspill eller sykkeltur.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Barnevennlig Styrke: "Dyreparken"</h3>
+            <div class="exercise-grid">
+                <div class="exercise-card">
+                    <span class="icon">🐻</span>
+                    <h4>Bjørnegange</h4>
+                    <p>Gå på alle fire med rumpa lavt.</p>
+                </div>
+                <div class="exercise-card">
+                    <span class="icon">🐸</span>
+                    <h4>Froskehopp</h4>
+                    <p>Dyp knebøy og hopp fremover.</p>
+                </div>
+                <div class="exercise-card">
+                    <span class="icon">🦀</span>
+                    <h4>Krabsegange</h4>
+                    <p>Gå bakover med magen opp.</p>
+                </div>
+                <div class="exercise-card">
+                    <span class="icon">🦩</span>
+                    <h4>Flamingoen</h4>
+                    <p>Stå på ett ben (balanse).</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="dad" class="tab-content">
+            <h1>Program: Vektnedgang (Mann 42)</h1>
+            <p style="font-style: italic; background: #fff5f5; padding: 15px; border-left: 4px solid #c05621;">
+                "For å forbrenne fett effektivt i 40-årene må vi kombinere høy puls med muskelstyrke. Dette programmet kommer <strong>i tillegg</strong> til familieturene (eller som en intensivering av dem)."
+            </p>
+
+            <h2>Din Ukeplan</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dag</th>
+                        <th>Type Økt</th>
+                        <th>Detaljer</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Dag">Mandag</td>
+                        <td data-label="Type Økt">Familie + Sirkel</td>
+                        <td data-label="Detaljer">Familieturen først. Deretter 15 min styrkesirkel.</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Dag">Tirsdag</td>
+                        <td data-label="Type Økt">Power-Walk (Solo)</td>
+                        <td data-label="Detaljer">45 min totalt. Veksle 3 min rolig / 3 min maks tempo.</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Dag">Torsdag</td>
+                        <td data-label="Type Økt">Motbakke</td>
+                        <td data-label="Detaljer">Finn en bakke. 8-10 drag (Raskt opp, rolig ned).</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Dag">Fredag</td>
+                        <td data-label="Type Økt">Hjemmestyrke</td>
+                        <td data-label="Detaljer">20-30 min fokusert styrke (se under).</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Dag">Helg</td>
+                        <td data-label="Type Økt">Langtur + Vekt</td>
+                        <td data-label="Detaljer">Bli med familien, men bær tung sekk (øker forbrenning).</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>🏋️‍♂️ Styrkesirkel (Hjemme)</h2>
+            <div class="info-box" style="background-color: #fffaf0; border-color: #c05621;">
+                <p><strong>Slik gjør du:</strong> Gjør øvelsene rett etter hverandre uten pause. Ta 2 min pause etter fullført runde. Gjenta 3-4 runder.</p>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 10px;">✅ <strong>Knebøy:</strong> 15 repetisjoner (Pass på rett rygg)</li>
+                    <li style="margin-bottom: 10px;">✅ <strong>Push-ups:</strong> Så mange du klarer</li>
+                    <li style="margin-bottom: 10px;">✅ <strong>Utfall:</strong> 10 repetisjoner per ben</li>
+                    <li style="margin-bottom: 10px;">✅ <strong>Planken:</strong> Hold til du skjelver (Failure)</li>
+                    <li style="margin-bottom: 10px;">✅ <strong>Rygghev:</strong> 15 repetisjoner (Ligg på magen, løft opp)</li>
+                </ul>
+            </div>
+        </div>
+
     </div>
 
-    <h3>Ukeplan for familien</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Dag</th>
-                <th>Aktivitet</th>
-                <th>Beskrivelse</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td data-label="Dag">Mandag</td>
-                <td data-label="Aktivitet">Trafikklys-turen 🚦</td>
-                <td data-label="Beskrivelse">30 min tur. Rødt hus/bil = Gå fort! Blått = Gå rolig.</td>
-            </tr>
-            <tr>
-                <td data-label="Dag">Onsdag</td>
-                <td data-label="Aktivitet">Intervall + Dyrestyrke 🐻</td>
-                <td data-label="Beskrivelse">20 min tur (3 rolig/3 rask) + 10 min styrkelek hjemme.</td>
-            </tr>
-            <tr>
-                <td data-label="Dag">Lørdag</td>
-                <td data-label="Aktivitet">Skogsbad (Shinrin-yoku) 🌲</td>
-                <td data-label="Beskrivelse">60 min i terreng. Fokus på ulendt underlag.</td>
-            </tr>
-            <tr>
-                <td data-label="Dag">Søndag</td>
-                <td data-label="Aktivitet">Aktiv Hvile ⚽</td>
-                <td data-label="Beskrivelse">Lek, ballspill eller sykkeltur.</td>
-            </tr>
-        </tbody>
-    </table>
+    <script>
+        function openTab(tabName) {
+            // Skjul alle innholds-seksjoner
+            var contents = document.getElementsByClassName("tab-content");
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].className = contents[i].className.replace(" active", "");
+            }
 
-    <h3>Barnevennlig Styrke: "Dyreparken"</h3>
-    <div class="exercise-grid">
-        <div class="exercise-card">
-            <span class="icon">🐻</span>
-            <h4>Bjørnegange</h4>
-            <p>Gå på alle fire med rumpa lavt.</p>
-        </div>
-        <div class="exercise-card">
-            <span class="icon">🐸</span>
-            <h4>Froskehopp</h4>
-            <p>Dyp knebøy og hopp fremover.</p>
-        </div>
-        <div class="exercise-card">
-            <span class="icon">🦀</span>
-            <h4>Krabsegange</h4>
-            <p>Gå bakover med magen opp.</p>
+            // Fjern aktiv-klasse fra knapper
+            document.getElementById("btn-family").className = "nav-btn tab-btn";
+            document.getElementById("btn-dad").className = "nav-btn tab-btn";
+
+            // Vis valgt innhold
+            document.getElementById(tabName).className += " active";
+
+            // Legg til aktiv-klasse på knappen som ble trykket
+            if (tabName === 'family') {
+                document.getElementById("btn-family").className += " active-family";
+            } else {
+                document.getElementById("btn-dad").className += " active-dad";
+            }
+        }
+    </script>
+
+</body>
+</html>
