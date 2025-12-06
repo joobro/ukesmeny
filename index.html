@@ -293,6 +293,20 @@
 
         const viralData = [
             { 
+                title: "Dalgona Coffee ☕", 
+                image: "https://images.unsplash.com/photo-1587888637140-84919d36d56d?q=80&w=800", 
+                desc: "Den originale virale kaffen! Luftig, søt og instagram-vennlig.", 
+                time: "10 min", 
+                servings: 1,
+                type: "Drikke",
+                week: "X",
+                day: "Kos",
+                timers: [{ label: "Piske kaffe", minutes: 5 }],
+                nutrition: { calories: "200", protein: "4g", fat: "4g", carbs: "35g" },
+                ingredients: ["2 ss Instant kaffe", "2 ss Sukker", "2 ss Varmt vann", "2 dl Melk", "Isbiter"], 
+                steps: ["Ha kaffe, sukker og varmt vann i en bolle.", "Pisk med håndmikser (eller visp) til det blir tykt og lyst skum.", "Fyll et glass med isbiter og melk.", "Topp melken med det luftige kaffeskummet."] 
+            },
+            { 
                 title: "Smash Burger 🍔", 
                 image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800", 
                 desc: "Ultimat helgemat med sprø stekeskorpe!", 
@@ -347,6 +361,104 @@
                 nutrition: { calories: "650", protein: "40g", fat: "35g", carbs: "30g" },
                 ingredients: ["Kyllinglår/vinger", "Kefir", "Mel", "Krydder (Paprika, Chili, Hvitløk)", "Olje til steking"], 
                 steps: ["Vend kylling i kefir, så i krydret mel.", "Gjenta for tykkere skorpe.", "Stek i olje i dyp panne til gylne og gjennomstekte."] 
+            },
+            { 
+                title: "Baked Feta Pasta 🍝", 
+                image: "https://images.unsplash.com/photo-1611270629669-1afc8a775c7e?q=80&w=800", 
+                desc: "Retten som 'ødela' internett! Superenkelt og kremet.", 
+                time: "35 min", 
+                servings: 4,
+                type: "Middag",
+                week: "X",
+                day: "Hverdag",
+                timers: [{ label: "Bake i ovn", minutes: 30 }],
+                nutrition: { calories: "600", protein: "20g", fat: "35g", carbs: "55g" },
+                ingredients: ["1 blokk Fetaost", "2 kurver Cherrytomater", "Pasta", "Olivenolje", "Hvitløk", "Fersk Basilikum"], 
+                steps: ["Legg fetaost i midten av en form, tomater rundt.", "Hell over olje, salt, pepper.", "Bak på 200 grader i 30 min.", "Kok pasta.", "Mos osten og tomatene sammen, bland inn pasta."] 
+            },
+            { 
+                title: "Salmon Rice Bowl 🍚", 
+                image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800", 
+                desc: "Emily Marikos virale restemat-hack.", 
+                time: "5 min", 
+                servings: 1,
+                type: "Lunsj",
+                week: "X",
+                day: "Hverdag",
+                timers: [],
+                nutrition: { calories: "500", protein: "30g", fat: "25g", carbs: "45g" },
+                ingredients: ["Rest av laks", "Kokt ris", "Isbit", "Soyasaus", "Sriracha", "Majones", "Avokado", "Kimchi/Tang"], 
+                steps: ["Legg laks og ris på tallerken. Legg en isbit i risen.", "Dekk med bakepapir og varm i mikroen (isbiten damper risen!).", "Bland inn soya, sriracha og majones.", "Spis med avokado og tang."] 
+            },
+            { 
+                title: "Tortilla Wrap Hack 🌮", 
+                image: "https://images.unsplash.com/photo-1626071466175-721d6eb104e7?q=80&w=800", 
+                desc: "Det smarte brette-trikset for perfekte wraps.", 
+                time: "10 min", 
+                servings: 1,
+                type: "Lunsj",
+                week: "X",
+                day: "Hverdag",
+                timers: [{ label: "Steke wrap", minutes: 3 }],
+                nutrition: { calories: "400", protein: "20g", fat: "20g", carbs: "35g" },
+                ingredients: ["1 stor Tortilla", "Fyll 1: Ost", "Fyll 2: Skinke/Kylling", "Fyll 3: Salat/Tomat", "Fyll 4: Saus/Pesto"], 
+                steps: ["Lag et snitt fra midten og ned.", "Legg fyll i hver av de fire 'kvadrantene'.", "Brett den ene delen over den andre, hele veien rundt.", "Stek i panne/toastjern."] 
+            },
+            { 
+                title: "Pesto Eggs 🍳", 
+                image: "https://images.unsplash.com/photo-1525351484163-7529414395d8?q=80&w=800", 
+                desc: "Stek eggene i pesto i stedet for olje - gamechanger!", 
+                time: "5 min", 
+                servings: 1,
+                type: "Frokost",
+                week: "X",
+                day: "Helg",
+                timers: [],
+                nutrition: { calories: "350", protein: "14g", fat: "28g", carbs: "10g" },
+                ingredients: ["2 Egg", "2 ss Grønn Pesto", "Brødskive", "Chiliolje (valgfritt)"], 
+                steps: ["Varm pesto i en stekepanne.", "Knekk eggene oppi pestoen.", "Stek til ønsket konsistens.", "Server på ristet brød."] 
+            },
+            { 
+                title: "Cloud Bread ☁️", 
+                image: "https://images.unsplash.com/photo-1589302168068-964664d93dc0?q=80&w=800", 
+                desc: "Superluftig, fargerikt og mykt som en sky.", 
+                time: "30 min", 
+                servings: 1,
+                type: "Bakst",
+                week: "X",
+                day: "Helg",
+                timers: [{ label: "Bake", minutes: 25 }],
+                nutrition: { calories: "150", protein: "10g", fat: "0g", carbs: "25g" },
+                ingredients: ["3 Eggehviter", "30g Sukker", "10g Maizena", "Konditorfarge (valgfritt)"], 
+                steps: ["Pisk eggehviter stive.", "Tilsett sukker litt og litt, så maizena.", "Form til en bolle på stekebrett.", "Stek på 150 grader i ca 25 min."] 
+            },
+            { 
+                title: "Mini Pancake Cereal 🥞", 
+                image: "https://images.unsplash.com/photo-1598214886806-c87b84b7078b?q=80&w=800", 
+                desc: "Bittesmå pannekaker i en bolle med melk.", 
+                time: "20 min", 
+                servings: 2,
+                type: "Frokost",
+                week: "X",
+                day: "Helg",
+                timers: [],
+                nutrition: { calories: "400", protein: "10g", fat: "15g", carbs: "60g" },
+                ingredients: ["Pannekakerøre (på flaske er enklest)", "Smør", "Sirup", "Melk"], 
+                steps: ["Lag mange bittesmå klatter med røre i pannen.", "Stek gyldne.", "Ha i en skål, topp med smør og sirup, eller spis med melk som frokostblanding."] 
+            },
+            { 
+                title: "Oreo Mug Cake 🧁", 
+                image: "https://images.unsplash.com/photo-1574085733277-851d9d856a3a?q=80&w=800", 
+                desc: "Kake klar på 2 minutter med kun 2 ingredienser.", 
+                time: "2 min", 
+                servings: 1,
+                type: "Dessert",
+                week: "X",
+                day: "Kos",
+                timers: [{ label: "Mikro", minutes: 1 }],
+                nutrition: { calories: "350", protein: "5g", fat: "15g", carbs: "50g" },
+                ingredients: ["4-5 Oreo-kjeks", "3-4 ss Melk"], 
+                steps: ["Knus kjeksen i en kopp.", "Rør inn melk til en røre.", "Kjør i mikroen i ca 1 minutt (sjekk underveis)."] 
             }
         ];
 
